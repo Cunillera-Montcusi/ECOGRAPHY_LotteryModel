@@ -1,0 +1,1 @@
+# ECOGRAPHY_LotteryModel
