@@ -3,7 +3,6 @@ title: "Metacommunity resilience against simulated gradients of wildfire: distur
 author: "David Cunillera-Montcusí, Ana Inés Borthagaray, Dani Boix, Stéphanie Gascón, Jordi Sala, Irene Tornero, Xavier D. Quintana & Matías Arim"
 subtitle: "asdas"
 date: "25-Mar-2021"
-output: rmdformats::downcute
 knit: (function(input_file, encoding) {
   out_dir <- 'docs';
   rmarkdown::render(input_file,
