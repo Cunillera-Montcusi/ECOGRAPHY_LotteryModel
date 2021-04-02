@@ -1,0 +1,2209 @@
+---
+title: "Metacommunity resilience against simulated gradients of wildfire: disturbance intensity and species dispersal ability determine landscape recover capacity"
+author: "David Cunillera-Montcusí, Ana Inés Borthagaray, Dani Boix, Stéphanie Gascón, Jordi Sala, Irene Tornero, Xavier D. Quintana & Matías Arim"
+subtitle: "asdas"
+date: "25-Mar-2021"
+output: html_document
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T,
+                      results = "hide",
+                      message=FALSE, warning=FALSE)
+```
+# **Script introduction**
+
+Find in the following lines the code corresponding to Supplementary material 3B: Lines_to_Analyse from the article "Metacommunity resilience against simulated gradients of wildfire: disturbance intensity and species dispersal ability determine landscape recover capacity". The original scripts with the used functions can be found in
+
+Article DOI: 
+
+Direct link: https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git
+
+## *Packages required to run the functions if needed*
+```{r packages , eval=FALSE}
+library(vegan)
+library(igraph)
+library(sna)
+library(dummies)
+
+# Load functions to run the all the simulations - Supplementary 3A: https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git
+source("Sup S3a- CunilleraMontcusi_et_al_Functions_for_LotteryModel_and_Recolonization_mixed_dispersal.R")
+
+```
+
+## *Initial steps before metacommunity splitting*
+
+### Initial metacommunity creation
+
+Creation of a metacommunity matrix having 542 communities with 20 species having 200 individuals each. 542 corresponds to the number of water bodies of the studied network. 
+We also create other matrices required by our functions: _out.t_. 
+
+```{r metacom creation, eval=FALSE}
+No<-rep(20,200)
+metacom<-matrix(rep(No),length(No),542)
+
+# Output matrix for tracking simulation convergence
+out.t<-matrix(c(1,0,0),1,3)
+```
+
+# **Network creation - Figure 2A**
+
+Uploading the xy dataset and creation of the different networks that correspond to the 9 dispersal abilities considered in the current study.
+
+```{r Figure 2A, echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Sixth round (L'ESTOCADA FINAL)/Rmarkdown/Figure 2A.jpg")
+```
+
+```{r networks creation, eval=FALSE}
+
+detach("package:sna", unload = TRUE) #detach "sna" package to avoid conflicts
+#Only use igraph package 
+
+# Chargin UTM coordinates of water bodies network
+xy.albera <- read.csv2(file = "xy.albera.csv", row.names = 1)
+as.matrix(dist(xy.albera[,1:2]))->D_ALBERA
+
+m250 <- ifelse(D_ALBERA>250,0,1)
+m500 <- ifelse(D_ALBERA>500,0,1)
+m1000 <- ifelse(D_ALBERA>1000,0,1)
+m1500 <- ifelse(D_ALBERA>1500,0,1)
+m2000 <- ifelse(D_ALBERA>2000,0,1)
+m2500 <- ifelse(D_ALBERA>2500,0,1)
+m3000 <- ifelse(D_ALBERA>3000,0,1)
+mpercol <- ifelse(D_ALBERA>3849.61,0,1)
+m5000 <- ifelse(D_ALBERA>5000,0,1)
+
+# Joint all created graphs into a list 
+all_graphs <- list(LG_albera250, LG_albera500, LG_albera1000, LG_albera1500, LG_albera2000,
+                   LG_albera2500, LG_albera3000, LG_alberapercol, LG_albera5000)
+length(all_graphs) # Check number of items
+```
+
+
+# **Metacommunity splitting**
+
+We generate the community spliting in 5 levels of "alfa" value (0.1,0.3,0.5,0.7,0.9). First, we create the vector with the corresponding alfas ( _all_alphas_ ). After this we run the function _split.metacomm.alpha_ (Supplementary material S3A - https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git). 
+
+We split matrix in two submatrices. Each "dispersal group" have a fraction (alpha) of individuals realted to a resource shared with other trophic groups. All individuals in the "shared pool" follow a neutral dynamic in which individuals of any species can be replaced by individuals of any other. In addition, the other fraction of individulas are related to resources exclusevely exploted by each dispersal group (1-alpha)
+
+### _Alpha of 0.1_
+```{r ALPHA 0.1,eval=FALSE}
+# list of alphas per each dispersal ability group
+all_alphas0.1 <- rep(0.1, times=length(all_graphs)) 
+
+mm0.1<- split.metacomm.alpha(grafos = all_graphs ,metacom = metacom, alphas = all_alphas0.1) # Use the alphas that represent the set of scenarios to be considered
+```
+
+### _Alpha of 0.3_
+```{r ALPHA 0.13,eval=FALSE}
+# list of alphas per each dispersal ability group
+all_alphas0.3 <- rep(0.3, times=length(all_graphs))
+
+mm0.3<- split.metacomm.alpha(grafos = all_graphs ,metacom = metacom, alphas = all_alphas0.3) # Use the alphas that represent the set of scenarios to be considered
+```
+
+### _Alpha of 0.5_
+```{r ALPHA 0.5,eval=FALSE}
+# list of alphas per each dispersal ability group
+all_alphas0.5 <- rep(0.5, times=length(all_graphs))
+
+mm0.5<- split.metacomm.alpha(grafos = all_graphs ,metacom = metacom, alphas = all_alphas0.5) # Use the alphas that represent the set of scenarios to be considered
+```
+
+### _Alpha of 0.7_
+```{r ALPHA 0.7,eval=FALSE}
+# list of alphas per each dispersal ability group
+all_alphas0.7 <- rep(0.7, times=length(all_graphs))
+
+mm0.7<- split.metacomm.alpha(grafos = all_graphs ,metacom = metacom, alphas = all_alphas0.7) # Use the alphas that represent the set of scenarios to be considered
+```
+
+### _Alpha of 0.9_ 
+```{r ALPHA 0.9,eval=FALSE}
+# list of alphas per each dispersal ability group
+all_alphas0.9 <- rep(0.9, times=length(all_graphs))
+
+mm0.9<- split.metacomm.alpha(grafos = all_graphs ,metacom = metacom, alphas = all_alphas0.9) # Use the alphas that represent the set of scenarios to be considered
+```
+
+# **Metacommunity creation - Figure 2B**
+Generation of the metacommunities for each alpha value using the function _meta.comm_neutral_asimetrica_ (Supplementary material S3A - https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git).
+First we generate the "entrada" list which will have all the needed entering items for the function.
+Second we run the function for 400 iterations and repeat it 25 times (=10,000 iterations). This is done to keep save the process every 400 iterations. 
+```{r Figure 2B, echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Sixth round (L'ESTOCADA FINAL)/Rmarkdown/Figure 2B.jpg")
+```
+
+### _Alpha of 0.1_
+```{r ALPHA 0.1 metacommunities,eval=FALSE}
+entrada0.1<-list("control.S"=out.t,"Spp.groups.dummy"=0, metacom.s=mm0.1[[1]], metacom.e=mm0.1[[2]], metacom=metacom)
+
+for (i in 1:25) {
+  meta.comm_neutral_asimetrica( grafos= all_graphs ,            # list with all graphs 
+                                it= 400 ,                       # number of iterations
+                                metacom.e= entrada0.1[[4]],        # metacom exlusive 
+                                metacom.s= entrada0.1[[3]],        # metacom shared
+                                m.in= 0.01,                     # migraton in 
+                                m.out= 0.01,                    # migration out 
+                                n= 50,                          # number of individuals removed
+                                out.t= entrada0.1[[1]] ,           # out where richness is saved - CONTROL
+                                cada= 50 ,                      # every time data will be saved
+                                alphas= all_alphas0.1)-> entrada0.1  # a vector with all alpha values (one by each graphs)
+  save.image("output/entrada01.RData") # For each for we save the environment 
+```
+
+### _Alpha of 0.3_
+```{r ALPHA 0.3 metacommunities,eval=FALSE}
+entrada0.3<-list("control.S"=out.t,"Spp.groups.dummy"=0, metacom.s=mm0.3[[1]], metacom.e=mm0.3[[2]], metacom=metacom)
+
+for (i in 1:25) {
+  meta.comm_neutral_asimetrica( grafos= all_graphs ,            # list with all graphs 
+                                it= 400 ,                       # number of iterations
+                                metacom.e= entrada0.3[[4]],        # metacom exlusive 
+                                metacom.s= entrada0.3[[3]],        # metacom shared
+                                m.in= 0.01,                     # migraton in 
+                                m.out= 0.01,                    # migration out 
+                                n= 50,                          # number of individuals removed
+                                out.t= entrada0.3[[1]] ,           # out where richness is saved - CONTROL
+                                cada= 50 ,                      # every time data will be saved
+                                alphas= all_alphas0.3)-> entrada0.3  # a vector with all alpha values (one by each graphs)
+  save.image("output/entrada03.RData") # For each for we save the environment 
+}
+```
+
+### _Alpha of 0.5_
+```{r ALPHA 0.5 metacommunities,eval=FALSE}
+entrada0.5<-list("control.S"=out.t,"Spp.groups.dummy"=0, metacom.s=mm0.5[[1]], metacom.e=mm0.5[[2]], metacom=metacom)
+
+for (i in 1:25) {
+  meta.comm_neutral_asimetrica( grafos= all_graphs ,            # list with all graphs 
+                                it= 400 ,                       # number of iterations
+                                metacom.e= entrada0.5[[4]],        # metacom exlusive 
+                                metacom.s= entrada0.5[[3]],        # metacom shared
+                                m.in= 0.01,                     # migraton in 
+                                m.out= 0.01,                    # migration out 
+                                n= 50,                          # number of individuals removed
+                                out.t= entrada0.5[[1]] ,           # out where richness is saved - CONTROL
+                                cada= 50 ,                      # every time data will be saved
+                                alphas= all_alphas0.5)-> entrada0.5  # a vector with all alpha values (one by each graphs)
+  save.image("output/entrada05.RData") # For each for we save the environment 
+}
+```
+
+### _Alpha of 0.7_
+```{r ALPHA 0.7 metacommunities,eval=FALSE}
+entrada0.7<-list("control.S"=out.t,"Spp.groups.dummy"=0, metacom.s=mm0.7[[1]], metacom.e=mm0.7[[2]], metacom=metacom)
+
+for (i in 1:25) {
+  meta.comm_neutral_asimetrica( grafos= all_graphs ,            # list with all graphs 
+                                it= 400 ,                       # number of iterations
+                                metacom.e= entrada0.7[[4]],        # metacom exlusive 
+                                metacom.s= entrada0.7[[3]],        # metacom shared
+                                m.in= 0.01,                     # migraton in 
+                                m.out= 0.01,                    # migration out 
+                                n= 50,                          # number of individuals removed
+                                out.t= entrada0.7[[1]] ,           # out where richness is saved - CONTROL
+                                cada= 50 ,                      # every time data will be saved
+                                alphas= all_alphas0.7)-> entrada0.7  # a vector with all alpha values (one by each graphs)
+  save.image("output/entrada07.RData") # For each for we save the environment 
+}
+```
+
+### _Alpha of 0.9_
+```{r ALPHA 0.9 metacommunities,eval=FALSE}
+entrada0.9<-list("control.S"=out.t,"Spp.groups.dummy"=0, metacom.s=mm0.9[[1]], metacom.e=mm0.9[[2]], metacom=metacom)
+
+for (i in 1:25) {
+  meta.comm_neutral_asimetrica( grafos= all_graphs ,            # list with all graphs 
+                                it= 400 ,                       # number of iterations
+                                metacom.e= entrada0.9[[4]],        # metacom exlusive 
+                                metacom.s= entrada0.9[[3]],        # metacom shared
+                                m.in= 0.01,                     # migraton in 
+                                m.out= 0.01,                    # migration out 
+                                n= 50,                          # number of individuals removed
+                                out.t= entrada0.9[[1]] ,           # out where richness is saved - CONTROL
+                                cada= 50 ,                      # every time data will be saved
+                                alphas= all_alphas0.9)-> entrada0.9  # a vector with all alpha values (one by each graphs)
+  save.image("output/entrada09.RData") # For each for we save the environment 
+}
+```
+
+# **Fake Fires simulation - Figure 2C**
+
+Simulation of the 400 wildfire scenarios of varying intensity and area using the function _rangos_ (Supplementary material S3A - https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git).
+With this simulation we create the _fake.wildfires_ table, that will be used in the following steps. 
+
+We also load the nodes that were affected by the wildfire in 2012 _Original_Fire.RData_ for using them in the simulations corresponding to that wildfire. 
+
+```{r Figure 2C, echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Sixth round (L'ESTOCADA FINAL)/Rmarkdown/Figure 2C.jpg")
+```
+
+
+```{r Fires and FakeFires ,eval=FALSE}
+# Fake fires - 400
+fake.wildfires<-rangos(XY = xy.albera, fire0 = 467, niveles = 20, efectividad = 20)
+colnames(fake.wildfires) # Check all values
+
+# Real 2012 wildfire
+load("Original_Fire.RData")
+Original_FIRE
+```
+
+# **Burning and recolonization - Figure 2D**
+
+We use the function _burning_recolonization_function.2_ (Supplementary material S3A - https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git). 
+First, this function burns (community=0) the selected communities according to the _Original_Fire.RData_ or the _fake.wildfires_. 
+Second, simulates the coalescent recolonization process after 1 iteration (T1) or after 100 (T100). Each process is done for each alpha value. 
+
+```{r Figure 2D, echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Sixth round (L'ESTOCADA FINAL)/Rmarkdown/Figure 2D.jpg")
+```
+
+## *Real 2012 wildfire* 
+### _Alpha of 0.1_
+#### T1
+```{r Burn_Recol T1 Alpha 0.1 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.1.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.1 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                             metacom =   entrada0.1[[5]],
+                                                             metacom.s = entrada0.1[[3]],
+                                                             metacom.e = entrada0.1[[4]],
+                                                             migra =0.01, grafos = all_graphs, it = 1, 
+                                                             alphas =  rep(0.1, times=length(all_graphs)),
+                                                             dummy.pool =entrada0.1[[2]],lista.n.grupos = lista.n)
+
+save.image("output/Orig_rec_ENTRADA_0.1_100.RData")
+```
+
+#### T100
+```{r Burn_Recol T100 Alpha 0.1 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.1.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.1_100 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                                 metacom =   entrada0.1[[5]],
+                                                                 metacom.s = entrada0.1[[3]],
+                                                                 metacom.e = entrada0.1[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 100, 
+                                                                 alphas =  rep(0.1, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.1[[2]],lista.n.grupos = lista.n)
+save.image("output/Orig_rec_ENTRADA_0.1_100.RData")
+```
+
+### _Alpha of 0.3_
+#### T1
+```{r Burn_Recol T1 Alpha 0.3 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.3.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.3 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                             metacom =   entrada0.3[[5]],
+                                                             metacom.s = entrada0.3[[3]],
+                                                             metacom.e = entrada0.3[[4]],
+                                                             migra =0.01, grafos = all_graphs, it = 1, 
+                                                             alphas =  rep(0.3, times=length(all_graphs)),
+                                                             dummy.pool =entrada0.3[[2]],lista.n.grupos = lista.n)
+save.image("output/Orig_rec_ENTRADA_0.3.RData")
+```
+
+#### T100
+```{r Burn_Recol T100 Alpha 0.3 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.3.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.3_100 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                              metacom =   entrada0.3[[5]],
+                                                              metacom.s = entrada0.3[[3]],
+                                                              metacom.e = entrada0.3[[4]],
+                                                              migra =0.01, grafos = all_graphs, it = 100, 
+                                                              alphas =  rep(0.3, times=length(all_graphs)),
+                                                              dummy.pool =entrada0.3[[2]],lista.n.grupos = lista.n)
+save.image("output/Orig_rec_ENTRADA_0.3_100.RData")
+```
+
+### _Alpha of 0.5_
+#### T1
+```{r Burn_Recol T1 Alpha 0.5 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.5.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.5 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                          metacom =   entrada0.5[[5]],
+                                                          metacom.s = entrada0.5[[3]],
+                                                          metacom.e = entrada0.5[[4]],
+                                                          migra =0.01, grafos = all_graphs, it = 1, 
+                                                          alphas =  rep(0.5, times=length(all_graphs)),
+                                                          dummy.pool =entrada0.5[[2]],lista.n.grupos = lista.n)
+save.image("output/Orig_rec_ENTRADA_0.5.RData")
+```
+
+#### T100
+```{r Burn_Recol T100 Alpha 0.5 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.5.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.5_100 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                              metacom =   entrada0.5[[5]],
+                                                              metacom.s = entrada0.5[[3]],
+                                                              metacom.e = entrada0.5[[4]],
+                                                              migra =0.01, grafos = all_graphs, it = 100, 
+                                                              alphas =  rep(0.5, times=length(all_graphs)),
+                                                              dummy.pool =entrada0.5[[2]],lista.n.grupos = lista.n)
+save.image("output/Orig_rec_ENTRADA_0.5_100.RData")
+```
+
+### _Alpha of 0.7_
+#### T1
+```{r Burn_Recol T1 Alpha 0.7 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.7.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.7 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                          metacom =   entrada0.7[[5]],
+                                                          metacom.s = entrada0.7[[3]],
+                                                          metacom.e = entrada0.7[[4]],
+                                                          migra =0.01, grafos = all_graphs, it = 1, 
+                                                          alphas =  rep(0.7, times=length(all_graphs)),
+                                                          dummy.pool =entrada0.7[[2]],lista.n.grupos = lista.n)
+save.image("output/Orig_rec_ENTRADA_0.7.RData")
+```
+
+#### T100
+```{r Burn_Recol T100 Alpha 0.7 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.7.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.7_100 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                              metacom =   entrada0.7[[5]],
+                                                              metacom.s = entrada0.7[[3]],
+                                                              metacom.e = entrada0.7[[4]],
+                                                              migra =0.01, grafos = all_graphs, it = 100, 
+                                                              alphas =  rep(0.7, times=length(all_graphs)),
+                                                              dummy.pool =entrada0.7[[2]],lista.n.grupos = lista.n)
+save.image("output/Orig_rec_ENTRADA_0.7_100.RData")
+```
+
+### _Alpha of 0.9_
+#### T1
+```{r Burn_Recol T1 Alpha 0.9 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.9.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.9 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                          metacom =   entrada0.9[[5]],
+                                                          metacom.s = entrada0.9[[3]],
+                                                          metacom.e = entrada0.9[[4]],
+                                                          migra =0.01, grafos = all_graphs, it = 1, 
+                                                          alphas =  rep(0.9, times=length(all_graphs)),
+                                                          dummy.pool =entrada0.9[[2]],lista.n.grupos = lista.n)
+save.image("output/Orig_rec_ENTRADA_0.9.RData")
+```
+
+#### T100
+```{r Burn_Recol T100 Alpha 0.9 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.9.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Orig_rec_ENTRADA_0.9_100 <- burning_recolonization_function.2(M =Original_FIRE, 
+                                                              metacom =   entrada0.9[[5]],
+                                                              metacom.s = entrada0.9[[3]],
+                                                              metacom.e = entrada0.9[[4]],
+                                                              migra =0.01, grafos = all_graphs, it = 100, 
+                                                              alphas =  rep(0.9, times=length(all_graphs)),
+                                                              dummy.pool =entrada0.9[[2]],lista.n.grupos = lista.n)
+save.image("output/Orig_rec_ENTRADA_0.9_100.RData")
+```
+
+## *Simulated fake fires scenarios* 
+### _Alpha of 0.1_
+#### T1
+```{r Burn_Recol_FakeFires T1 Alpha 0.1 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.1.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.1 <- burning_recolonization_function.2(M =fake.wildfires, 
+                                                                 metacom =   entrada0.1[[5]],
+                                                                 metacom.s = entrada0.1[[3]],
+                                                                 metacom.e = entrada0.1[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 1, 
+                                                                 alphas =  rep(0.1, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.1[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.1.Rdata")
+```
+
+#### T100
+```{r Burn_Recol_FakeFires T100 Alpha 0.1 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.1.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.1_100 <- burning_recolonization_function.2(M =fake.wildfires, 
+                                                                 metacom =   entrada0.1[[5]],
+                                                                 metacom.s = entrada0.1[[3]],
+                                                                 metacom.e = entrada0.1[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 100, 
+                                                                 alphas =  rep(0.1, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.1[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.1_100.RData")
+```
+
+### _Alpha of 0.3_
+#### T1
+```{r Burn_Recol_FakeFires T1 Alpha 0.3 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.3.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.3 <- burning_recolonization_function.2(M =fake.wildfires, 
+                                                                 metacom =   entrada0.3[[5]],
+                                                                 metacom.s = entrada0.3[[3]],
+                                                                 metacom.e = entrada0.3[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 1, 
+                                                                 alphas =  rep(0.3, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.3[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.3.RData")
+```
+
+#### T100
+```{r Burn_Recol_FakeFires T100 Alpha 0.3 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.3.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.3_100 <- burning_recolonization_function.2(M =fake.wildfires, 
+                                                                 metacom =   entrada0.3[[5]],
+                                                                 metacom.s = entrada0.3[[3]],
+                                                                 metacom.e = entrada0.3[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 100, 
+                                                                 alphas =  rep(0.3, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.3[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.3_100_05.RData")
+```
+
+### _Alpha of 0.5_
+#### T1
+```{r Burn_Recol_FakeFires T1 Alpha 0.5 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.5.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.5 <- burning_recolonization_function.2(M =fake.wildfires, 
+                                                                 metacom =   entrada0.5[[5]],
+                                                                 metacom.s = entrada0.5[[3]],
+                                                                 metacom.e = entrada0.5[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 1, 
+                                                                 alphas =  rep(0.5, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.5[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.5.RData")
+```
+
+#### T100
+```{r Burn_Recol_FakeFires T100 Alpha 0.5 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.5.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.5_100 <- burning_recolonization_function.2(M =fake.wildfires, 
+                                                                 metacom =   entrada0.5[[5]],
+                                                                 metacom.s = entrada0.5[[3]],
+                                                                 metacom.e = entrada0.5[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 100, 
+                                                                 alphas =  rep(0.5, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.5[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.5_100.RData")
+```
+
+### _Alpha of 0.7_
+#### T1
+```{r Burn_Recol_FakeFires T1 Alpha 0.7 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.7.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.7 <- burning_recolonization_function.2(M =fake.wildfires, 
+                                                                 metacom =   entrada0.7[[5]],
+                                                                 metacom.s = entrada0.7[[3]],
+                                                                 metacom.e = entrada0.7[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 1, 
+                                                                 alphas =  rep(0.7, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.7[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.7.RData")
+```
+
+#### T100
+```{r Burn_Recol_FakeFires T100 Alpha 0.7 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.7.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.7_100 <- burning_recolonization_function.2(M =fake.wildfires[,c(1:3,4)], 
+                                                                 metacom =   entrada0.7[[5]],
+                                                                 metacom.s = entrada0.7[[3]],
+                                                                 metacom.e = entrada0.7[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 100, 
+                                                                 alphas =  rep(0.7, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.7[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.7_100.RData")
+```
+
+### _Alpha of 0.9_
+#### T1
+```{r Burn_Recol_FakeFires T1 Alpha 0.9 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.9.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.9 <- burning_recolonization_function.2(M =fake.wildfires, 
+                                                                 metacom =   entrada0.9[[5]],
+                                                                 metacom.s = entrada0.9[[3]],
+                                                                 metacom.e = entrada0.9[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 1, 
+                                                                 alphas =  rep(0.9, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.9[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.9.RData")
+```
+
+#### T100
+```{r Burn_Recol_FakeFires T100 Alpha 0.9 ,eval=FALSE}
+# Load the simulated metacommunities generated in the step 2B (see above)
+load("Pre-Burned_Communities/entrada0.9.RData")
+
+# Generate an output list with 9 "items"
+lista.n <- list("primer","segon","tercer","quaert","cinque","sise","sete","buite","nove")
+
+Burn_rec_ENTRADA_0.9_100 <- burning_recolonization_function.2(M =fake.wildfires, 
+                                                                 metacom =   entrada0.9[[5]],
+                                                                 metacom.s = entrada0.9[[3]],
+                                                                 metacom.e = entrada0.9[[4]],
+                                                                 migra =0.01, grafos = all_graphs, it = 100, 
+                                                                 alphas =  rep(0.9, times=length(all_graphs)),
+                                                                 dummy.pool =entrada0.9[[2]],lista.n.grupos = lista.n)
+save.image("output/Burn_rec_ENTRADA_0.9_100.RData")
+```
+
+# **Results and Article plots - Real 2012 wildfire**
+Once we finish all the simulations for the Real 2012 wildfire and the Simulated Fake Fires scenarios and each of the 5 alphas we created the plots. Plots shown in the Article correspond only to alpha=0.5 values. All the other plots can be found here or in the supplementary material.   
+
+### _Load the output data_ 
+```{r Load Burn_Recolonized data, eval=FALSE}
+load("Post-Burned_RecolinzedCommunities/Burn/Original/Orig_rec_ENTRADA_0.1_100.RData")
+load("Post-Burned_RecolinzedCommunities/Burn/Original/Orig_rec_ENTRADA_0.3_100.RData")
+load("Post-Burned_RecolinzedCommunities/Burn/Original/Orig_rec_ENTRADA_0.5_100.RData")
+load("Post-Burned_RecolinzedCommunities/Burn/Original/Orig_rec_ENTRADA_0.7_100.RData")
+load("Post-Burned_RecolinzedCommunities/Burn/Original/Orig_rec_ENTRADA_0.9_100.RData")
+
+# Cunillera_palette - Available at https://github.com/Cunillera-Montcusi/Cunillera_Pallete
+source("CUNILLERA_palette.R")
+colorts<- CUNILLERA_pal("grey")(9)
+```
+
+We calculate Return Rate (RR) and Diversity Recover (DR) for each one of the alphas and for the real 2012 wildfire scenario.
+First, we create the plot functions for generating the plots:
+## _Function to generate plots_ 
+```{r Plot_Function_Original ,eval=FALSE}
+# Plot for RR values
+plot_RR_iter <- function(Orig_rec_100, titol){
+  Dispersal_abilities <- c(250,500,1000,1500,2000,2500,3000,3842,5000)
+  #par(mfrow=c(2,1))
+  # Iterations_______________________________________________________________ 
+  iter_disponibles <- NULL
+  for (e in 1:9) {
+    iter_disponibles[e] <-Orig_rec_100$Iteraciones_para_fill[[e]][,14]  
+  }
+  iter_disponibles <- (100/iter_disponibles)/100
+  barCenters <- barplot(iter_disponibles,1,
+                        ylim = c(0,1) , col=colorts,border = "black",main = títol,cex.names=1.2,
+                        ylab = "RR", xlab= "Dispersal abilities",cex.axis=1.5,cex=2)
+  box(which = "plot", lty = "solid")
+  text(barCenters,par("usr")[3]-0.015, srt = 60, adj= 1, xpd = TRUE, labels =Dispersal_abilities , cex=1.4)
+  
+  sd_iter_disponibles <- NULL
+  for (e in 1:9) {
+    sd_iter_disponibles[e] <-Orig_rec_100$sd.iteraciones.fill[[e]][,14]  
+  }
+  sd_iter_disponibles <- (100/sd_iter_disponibles)/100
+  arrows(x0 =barCenters, x1 =barCenters,
+         y0 =iter_disponibles, y1=ifelse(iter_disponibles+sd_iter_disponibles>100,95,iter_disponibles+sd_iter_disponibles),
+         angle = 90, length = 0.1)
+  #abline(0,0, col="black")  
+}
+# Plot for DC values
+plot_Orig_DC <- function(Orig_rec_100, Pre_fire_Orig, titol){
+  Dispersal_abilities <- c(250,500,1000,1500,2000,2500,3000,3842,5000)
+  # Original_______________________________________________________________ 
+  spp_disponibles <- NULL
+  pre_spp <- NULL
+  for (e in 1:9) {
+    spp_disponibles[e] <-Orig_rec$Prop.spp.disponibles[[e]][,14]
+    pre_spp[e] <- Pre_fire_Orig$Prop.spp.disponibles[[e]][,14]
+    #pre_spp[e] <- mean(apply(ifelse(as.matrix(Pre_fire_Orig[[5]][which(Pre_fire_Orig[[2]][,e]==1),Original_FIRE[,3]])>0,1,0),2,sum))
+  }
+  spp_disponibles <- (pre_spp*100)/spp_disponibles
+  spp_disponibles<- ifelse(spp_disponibles>100,100,spp_disponibles)
+  # PLot line
+  plot(Dispersal_abilities, spp_disponibles,
+       ylim = c(0,105), xlim = c(0,5000), type="l",col="darkblue", lwd=2, lty=3,cex=2,cex.axis=1.5,
+       ylab = "", xlab= "",main = "")
+  # Plot points
+  par(new=T)
+  plot(Dispersal_abilities, spp_disponibles,
+       ylim = c(0,105), xlim = c(0,5000), type="p", col="black",bg=colorts, 
+       ylab = "DR", xlab= "Dispersal abilities",main = títol,
+       pch=21, cex=2,cex.axis=1.5)
+  
+  #SD _____________________
+  sd_spp_disponibles <- NULL
+  sd_pre_spp <- NULL
+  for (e in 1:9) {
+    sd_spp_disponibles[e] <-Orig_rec$sd.spp.disponibles[[e]][,14]
+    #sd_pre_spp[e] <- sd(apply(ifelse(as.matrix(Pre_fire_Orig[[e]][which(Pre_fire_Orig[[2]][,1]==e),Original_FIRE[,3]])>0,1,0),2,sum))
+    sd_pre_spp[e] <- Pre_fire_Orig$sd.spp.disponibles[[e]][,14]
+    sd_spp_disponibles[e] <- mean(sd_spp_disponibles[e],sd_pre_spp[e])
+  }
+  
+  arrows(x0 = Dispersal_abilities, x1 =Dispersal_abilities,
+         y0 =spp_disponibles, y1= ifelse(spp_disponibles-sd_spp_disponibles<0,0,spp_disponibles-sd_spp_disponibles),
+         code=2, angle = 90, length = 0.1, col="grey30")
+  arrows(x0 = Dispersal_abilities, x1 =Dispersal_abilities,
+         y0 =spp_disponibles, y1= spp_disponibles+sd_spp_disponibles,
+         code=2, angle = 90, length = 0.1, col="grey30")
+  
+}
+```
+
+## Second, we create the plots for *all alpha values*
+```{r Plot Original_Alphas ,eval=FALSE}
+png(filename = "original_fires_outputs.png",width = 18000,height =14000 ,units = "px",res = 1000)
+
+#Alpha 0.1
+par(mfrow=c(3,4),cex.main=2, las=1)
+plot_RR_iter(Orig_rec_100 =Orig_rec_ENTRADA_0.1_100 , titol = "A-0.1")
+plot_Orig_DC(Orig_rec_100 =Orig_rec_ENTRADA_0.1_100 , Pre_fire_Orig=Orig_rec_ENTRADA_0.1, titol = "B-0.1")
+#Alpha 0.3
+par(las=1)
+plot_RR_iter(Orig_rec_100 =Orig_rec_ENTRADA_0.3_100 , titol = "A-0.3")
+plot_Orig_DC(Orig_rec_100 =Orig_rec_ENTRADA_0.3_100 , Pre_fire_Orig=Orig_rec_ENTRADA_0.3, titol = "B-0.3")
+#Alpha 0.5
+par(las=1)
+plot_RR_iter(Orig_rec_100 =Orig_rec_ENTRADA_0.5_100 , titol = "A-0.5")
+plot_Orig_DC(Orig_rec_100 =Orig_rec_ENTRADA_0.5_100 , Pre_fire_Orig=Orig_rec_ENTRADA_0.5, titol = "B-0.5")
+#Alpha 0.7
+par(las=1)
+plot_RR_iter(Orig_rec_100 =Orig_rec_ENTRADA_0.7_100 , titol = "A-0.7")
+plot_Orig_DC(Orig_rec_100 =Orig_rec_ENTRADA_0.7_100 , Pre_fire_Orig=Orig_rec_ENTRADA_0.7, titol = "B-0.7")
+#Alpha 0.9
+par(las=1)
+plot_RR_iter(Orig_rec_100 =Orig_rec_ENTRADA_0.9_100 , titol = "A-0.9")
+plot_Orig_DC(Orig_rec_100 =Orig_rec_ENTRADA_0.9_100 , Pre_fire_Orig=Orig_rec_ENTRADA_0.9, titol = "B-0.9")
+
+dev.off()
+```
+
+## *Figure 4 (alpha=0.5)*
+```{r Plot Original_Alpha 0.5 ,eval=FALSE}
+png(filename = "original_0.5_outputs.png",width = 15000,height = 7000,units = "px",res = 1000)
+
+par(mfrow=c(1,2),cex.main=2, las=1, font=1, font.lab=2,cex.lab=1.2)
+plot_RR_iter(Orig_rec_100 =Orig_rec_ENTRADA_0.5_100, titol = "")
+plot_Orig_DC(Orig_rec_100 =Orig_rec_ENTRADA_0.5_100 , Pre_fire_Orig=Orig_rec_ENTRADA_0.5,titol="")
+
+dev.off()
+```
+
+## *Figure 4*
+```{r Figure 4, echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Figures to share/Figure 4.jpg")
+```
+
+## *Supplementary S4*
+```{r sUPPLEMENTARY S4, echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/original_fires_outputs.png")
+```
+
+
+# **Results and Article plots - Simulated wildfires**
+Simulated wildfires scenarios are ploted altogether in "3D" plots where the wildfire scenarios characteristics: y=intensitty and x=area and the response variable (RR, DR, Average richness T1, Average richness T100) are represented. 
+
+## *Load and join the output data for T1 and T100* 
+### _T1_
+```{r Load Burn Recolonized FakeFires at T1 ,eval=FALSE}
+load("Post-Burned_RecolinzedCommunities/Burn/T1/Burn_rec_ENTRADA_0.1.RData")
+load("Post-Burned_RecolinzedCommunities/Burn/T1/Burn_rec_ENTRADA_0.3.RData")
+load("Post-Burned_RecolinzedCommunities/Burn/T1/Burn_rec_ENTRADA_0.5.RData")
+load("Post-Burned_RecolinzedCommunities/Burn/T1/Burn_rec_ENTRADA_0.7.RData")
+load("Post-Burned_RecolinzedCommunities/Burn/T1/Burn_rec_ENTRADA_0.9.RData")
+```
+
+### _T100_ 
+```{r Load recolonized data FakeFires T100 ,eval=FALSE}
+load("C:/Users/Cunilleramontcusi/Desktop/Burn/T100/0.1/Burn_rec_ENTRADA_0.1_100_JOINT.RData")
+load("C:/Users/Cunilleramontcusi/Desktop/Burn/T100/0.3/Burn_rec_ENTRADA_0.3_100_JOINT.RData")
+load("C:/Users/Cunilleramontcusi/Desktop/Burn/T100/0.5/Burn_rec_ENTRADA_0.5_100_JOINT.RData")
+load("C:/Users/Cunilleramontcusi/Desktop/Burn/T100/0.7/Burn_rec_ENTRADA_0.7_100_JOINT.RData")
+load("C:/Users/Cunilleramontcusi/Desktop/Burn/T100/0.9/Burn_rec_ENTRADA_0.9_100_JOINT.RData")
+
+# Data treatment to joint several parts of the data 
+buidatge_BURN_output <- function(Burn_05,Burn_10,Burn_15,Burn_20,Burn_25,
+                                 Burn_30,Burn_35,Burn_40,Burn_45,Burn_50,
+                                 Burn_55,Burn_60,Burn_65,Burn_70,Burn_75,
+                                 Burn_80,Burn_85,Burn_90,Burn_95,Burn_100){
+  Prop.spp.disponibles <- list("1","2","3","4","5","6","7","8","9")
+  for (a in 1:9) {
+    Prop.spp.disponibles[[a]] <- rbind(Burn_05[[1]][[a]],Burn_10[[1]][[a]],Burn_15[[1]][[a]],Burn_20[[1]][[a]],Burn_25[[1]][[a]],
+                                       Burn_30[[1]][[a]],Burn_35[[1]][[a]],Burn_40[[1]][[a]],Burn_45[[1]][[a]],Burn_50[[1]][[a]],
+                                       Burn_55[[1]][[a]],Burn_60[[1]][[a]],Burn_65[[1]][[a]],Burn_70[[1]][[a]],Burn_75[[1]][[a]],
+                                       Burn_80[[1]][[a]],Burn_85[[1]][[a]],Burn_90[[1]][[a]],Burn_95[[1]][[a]],Burn_100[[1]][[a]])  
+  }
+  Iteraciones_para_fill<- list("1","2","3","4","5","6","7","8","9")
+  for (b in 1:9) {
+    Iteraciones_para_fill[[b]] <- rbind(Burn_05[[2]][[b]],Burn_10[[2]][[b]],Burn_15[[2]][[b]],Burn_20[[2]][[b]],Burn_25[[2]][[b]],
+                                        Burn_30[[2]][[b]],Burn_35[[2]][[b]],Burn_40[[2]][[b]],Burn_45[[2]][[b]],Burn_50[[2]][[b]],
+                                        Burn_55[[2]][[b]],Burn_60[[2]][[b]],Burn_65[[2]][[b]],Burn_70[[2]][[b]],Burn_75[[2]][[b]],
+                                        Burn_80[[2]][[b]],Burn_85[[2]][[b]],Burn_90[[2]][[b]],Burn_95[[2]][[b]],Burn_100[[2]][[b]])  
+  }
+  sd.spp.disponibles<- list("1","2","3","4","5","6","7","8","9")
+  for (c in 1:9) {
+    sd.spp.disponibles[[c]] <- rbind(Burn_05[[3]][[c]],Burn_10[[3]][[c]],Burn_15[[3]][[c]],Burn_20[[3]][[c]],Burn_25[[3]][[c]],
+                                     Burn_30[[3]][[c]],Burn_35[[3]][[c]],Burn_40[[3]][[c]],Burn_45[[3]][[c]],Burn_50[[3]][[c]],
+                                     Burn_55[[3]][[c]],Burn_60[[3]][[c]],Burn_65[[3]][[c]],Burn_70[[3]][[c]],Burn_75[[3]][[c]],
+                                     Burn_80[[3]][[c]],Burn_85[[3]][[c]],Burn_90[[3]][[c]],Burn_95[[3]][[c]],Burn_100[[3]][[c]])  
+  }
+  sd.iteraciones.fill<- list("1","2","3","4","5","6","7","8","9")
+  for (d in 1:9) {
+    sd.iteraciones.fill[[d]] <- rbind(Burn_05[[4]][[d]],Burn_10[[4]][[d]],Burn_15[[4]][[d]],Burn_20[[4]][[d]],Burn_25[[4]][[d]],
+                                      Burn_30[[4]][[d]],Burn_35[[4]][[d]],Burn_40[[4]][[d]],Burn_45[[4]][[d]],Burn_50[[4]][[d]],
+                                      Burn_55[[4]][[d]],Burn_60[[4]][[d]],Burn_65[[4]][[d]],Burn_70[[4]][[d]],Burn_75[[4]][[d]],
+                                      Burn_80[[4]][[d]],Burn_85[[4]][[d]],Burn_90[[4]][[d]],Burn_95[[4]][[d]],Burn_100[[4]][[d]])  
+  }
+  out <- list(Prop.spp.disponibles,Iteraciones_para_fill,sd.spp.disponibles,sd.iteraciones.fill)
+  out 
+}
+
+# generate an output 0.1 T100
+Burn_0.1_T100 <- buidatge_BURN_output(Burn_rec_ENTRADA_0.1_100_05,Burn_rec_ENTRADA_0.1_100_10,Burn_rec_ENTRADA_0.1_100_15,
+                                      Burn_rec_ENTRADA_0.1_100_20,Burn_rec_ENTRADA_0.1_100_25,Burn_rec_ENTRADA_0.1_100_30,
+                                      Burn_rec_ENTRADA_0.1_100_35,Burn_rec_ENTRADA_0.1_100_40,Burn_rec_ENTRADA_0.1_100_45,
+                                      Burn_rec_ENTRADA_0.1_100_50,Burn_rec_ENTRADA_0.1_100_55,Burn_rec_ENTRADA_0.1_100_60,
+                                      Burn_rec_ENTRADA_0.1_100_65,Burn_rec_ENTRADA_0.1_100_70,Burn_rec_ENTRADA_0.1_100_75,
+                                      Burn_rec_ENTRADA_0.1_100_80,Burn_rec_ENTRADA_0.1_100_85,Burn_rec_ENTRADA_0.1_100_90,
+                                      Burn_rec_ENTRADA_0.1_100_95,Burn_rec_ENTRADA_0.1_100_1)
+
+# generate an output 0.3 T100
+Burn_0.3_T100 <- buidatge_BURN_output(Burn_rec_ENTRADA_0.3_100_05,Burn_rec_ENTRADA_0.3_100_10,Burn_rec_ENTRADA_0.3_100_15,
+                                      Burn_rec_ENTRADA_0.3_100_20,Burn_rec_ENTRADA_0.3_100_25,Burn_rec_ENTRADA_0.3_100_30,
+                                      Burn_rec_ENTRADA_0.3_100_35,Burn_rec_ENTRADA_0.3_100_40,Burn_rec_ENTRADA_0.3_100_45,
+                                      Burn_rec_ENTRADA_0.3_100_50,Burn_rec_ENTRADA_0.3_100_55,Burn_rec_ENTRADA_0.3_100_60,
+                                      Burn_rec_ENTRADA_0.3_100_65,Burn_rec_ENTRADA_0.3_100_70,Burn_rec_ENTRADA_0.3_100_75,
+                                      Burn_rec_ENTRADA_0.3_100_80,Burn_rec_ENTRADA_0.3_100_85,Burn_rec_ENTRADA_0.3_100_90,
+                                      Burn_rec_ENTRADA_0.3_100_95,Burn_rec_ENTRADA_0.3_100_1)
+
+# generate an output 0.5 T100
+Burn_0.5_T100 <- buidatge_BURN_output(Burn_rec_ENTRADA_0.5_100_05,Burn_rec_ENTRADA_0.5_100_10,Burn_rec_ENTRADA_0.5_100_15,
+                                      Burn_rec_ENTRADA_0.5_100_20,Burn_rec_ENTRADA_0.5_100_25,Burn_rec_ENTRADA_0.5_100_30,
+                                      Burn_rec_ENTRADA_0.5_100_35,Burn_rec_ENTRADA_0.5_100_40,Burn_rec_ENTRADA_0.5_100_45,
+                                      Burn_rec_ENTRADA_0.5_100_50,Burn_rec_ENTRADA_0.5_100_55,Burn_rec_ENTRADA_0.5_100_60,
+                                      Burn_rec_ENTRADA_0.5_100_65,Burn_rec_ENTRADA_0.5_100_70,Burn_rec_ENTRADA_0.5_100_75,
+                                      Burn_rec_ENTRADA_0.5_100_80,Burn_rec_ENTRADA_0.5_100_85,Burn_rec_ENTRADA_0.5_100_90,
+                                      Burn_rec_ENTRADA_0.5_100_95,Burn_rec_ENTRADA_0.5_100_1)
+
+# generate an output 0.7 T100
+Burn_0.7_T100 <- buidatge_BURN_output(Burn_rec_ENTRADA_0.7_100_05,Burn_rec_ENTRADA_0.7_100_10,Burn_rec_ENTRADA_0.7_100_15,
+                                      Burn_rec_ENTRADA_0.7_100_20,Burn_rec_ENTRADA_0.7_100_25,Burn_rec_ENTRADA_0.7_100_30,
+                                      Burn_rec_ENTRADA_0.7_100_35,Burn_rec_ENTRADA_0.7_100_40,Burn_rec_ENTRADA_0.7_100_45,
+                                      Burn_rec_ENTRADA_0.7_100_50,Burn_rec_ENTRADA_0.7_100_55,Burn_rec_ENTRADA_0.7_100_60,
+                                      Burn_rec_ENTRADA_0.7_100_65,Burn_rec_ENTRADA_0.7_100_70,Burn_rec_ENTRADA_0.7_100_75,
+                                      Burn_rec_ENTRADA_0.7_100_80,Burn_rec_ENTRADA_0.7_100_85,Burn_rec_ENTRADA_0.7_100_90,
+                                      Burn_rec_ENTRADA_0.7_100_95,Burn_rec_ENTRADA_0.7_100_1)
+# generate an output 0.9 T100
+Burn_0.9_T100 <- buidatge_BURN_output(Burn_rec_ENTRADA_0.9_100_05,Burn_rec_ENTRADA_0.9_100_10,Burn_rec_ENTRADA_0.9_100_15,
+                                      Burn_rec_ENTRADA_0.9_100_20,Burn_rec_ENTRADA_0.9_100_25,Burn_rec_ENTRADA_0.9_100_30,
+                                      Burn_rec_ENTRADA_0.9_100_35,Burn_rec_ENTRADA_0.9_100_40,Burn_rec_ENTRADA_0.9_100_45,
+                                      Burn_rec_ENTRADA_0.9_100_50,Burn_rec_ENTRADA_0.9_100_55,Burn_rec_ENTRADA_0.9_100_60,
+                                      Burn_rec_ENTRADA_0.9_100_65,Burn_rec_ENTRADA_0.9_100_70,Burn_rec_ENTRADA_0.9_100_75,
+                                      Burn_rec_ENTRADA_0.9_100_80,Burn_rec_ENTRADA_0.9_100_85,Burn_rec_ENTRADA_0.9_100_90,
+                                      Burn_rec_ENTRADA_0.9_100_95,Burn_rec_ENTRADA_0.9_100_1)
+```
+
+## *Functions to generate plots* 
+
+### _Figure 3- Entire metacommunity at T1 and T100_
+```{r Entire metacommunity at T1 - Figure 3, eval=FALSE}
+# Plots of the whole community (summ of all dispersal abilities) for each alpha 
+GLOBAL_ARTICLE_FOR_GGPLOT <- function(Post_Val_Matrix, title, subtitle){
+  # Packages needed
+  require(ggplot2)
+  require(devtools)
+  require(metR) # IF not installed: install_github("eliocamp/metR")
+  
+  df <- as.data.frame((Post_Val_Matrix[[1]][[1]]+Post_Val_Matrix[[1]][[2]]+
+                         Post_Val_Matrix[[1]][[3]]+Post_Val_Matrix[[1]][[4]]+
+                         Post_Val_Matrix[[1]][[5]]+Post_Val_Matrix[[1]][[6]]+
+                         Post_Val_Matrix[[1]][[7]]+Post_Val_Matrix[[1]][[8]]+
+                         Post_Val_Matrix[[1]][[9]])) # Make the output a data.frame
+  out <- list()                             # Generate and out in list format 
+  out.bo <- list()                          # Generate and out in list format
+  for(i in 1:length(df)){                   # Loop for each column of the data.frame (that corresponds to Wild. Size)
+    out.temp <- df[1:20,i]    # Select all rows in each column and make them a data.frame
+    out[[i]] <- out.temp      # Put all the rows in data.frame format into the out list 
+  }
+  for (e in 1:20) {             # For every 20 times 
+    ee<- data.frame(out[[e]],rep(e,times=20),seq(from=0.05, to=1, by=0.05)) # create a new data.frame with the Richness/area/intensity
+    colnames(ee) <- c("Richness","area","intensity") # Change column names
+    out.bo[[e]] <- ee
+  }
+  final <- do.call(rbind,out.bo) # Joints the several lists objects created in one big data.frame  
+  if(min(final[,1])>90) # Condition that if the minimum richness is GREATER than 90 will follow the below path
+    plot <-ggplot(final,aes(x=area, y=intensity))+
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005), 
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "Spectral",direction =1, limits = c(0,150))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 30, color = "black"), 
+          axis.text.y = element_text(size = 30, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 16,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 24, face = "bold"))
+  else plot <-ggplot(final,aes(x=area, y=intensity))+ # Condition that if the minimum richness is SMALLER than 90 will follow 
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005),
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue. LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "Spectral",direction =1, limits = c(0,150))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    # Sets the contour by Richness. BINWIDTH: the value between each contour line 
+    geom_contour(aes(z=Richness), colour="black",size=0.5,lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 10)+
+    # Determines the labels with a white STROKE below them
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    geom_text_contour(aes(z = Richness),stroke = 0.2, size=20, rotate = F,check_overlap=T)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 30, color = "black"), 
+          axis.text.y = element_text(size = 30, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 16,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 24, face = "bold"))
+  
+  plot
+}
+```
+
+### _Figure 5, Supplementary S5 and S6 Simulated wildfires RR_
+```{r Simulated wildfires RR - Figure 5, Supplementary S5 and S6, eval=FALSE}
+# Plot to combine all individual articles made with the function ARTICLE_FOR_GGPLOT
+Combined_article_plot_RR <- function(Post_Val_Matrix, file_name, iterations ){
+  plot_Post_fire_1 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[2]][[1]],iterations,"250 m")  
+  plot_Post_fire_2 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[2]][[2]],iterations,"500 m")  
+  plot_Post_fire_3 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[2]][[3]],iterations,"1000 m")  
+  plot_Post_fire_4 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[2]][[4]],iterations,"1500 m")  
+  plot_Post_fire_5 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[2]][[5]],iterations,"2000 m")  
+  plot_Post_fire_6 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[2]][[6]],iterations,"2500 m")  
+  plot_Post_fire_7 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[2]][[7]],iterations,"3000 m")  
+  plot_Post_fire_8 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[2]][[8]],iterations,"Percolation distance (3842 m)")  
+  plot_Post_fire_9 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[2]][[9]],iterations,"5000 m")  
+  
+  ####Els multiplots PER FUNCTIONAL TRAITS AFTER###
+  library(gtable)    
+  library(grid)
+  library(gridExtra) 
+  
+  # Get the gtables
+  gA <- ggplotGrob(plot_Post_fire_1)
+  gB <- ggplotGrob(plot_Post_fire_2)
+  gC <- ggplotGrob(plot_Post_fire_3)
+  gD <- ggplotGrob(plot_Post_fire_4)
+  gE <- ggplotGrob(plot_Post_fire_5)
+  gF <- ggplotGrob(plot_Post_fire_6)
+  gG <- ggplotGrob(plot_Post_fire_7)
+  gH <- ggplotGrob(plot_Post_fire_8)
+  gI <- ggplotGrob(plot_Post_fire_9)
+  
+  # Arrange the two charts
+  # The legend boxes are centered
+  grid.newpage()
+  png(filename = paste("C:/Users/Cunilleramontcusi/Desktop/",file_name,".png", sep=""),width=14000,height=12000,units="px",res=800)
+  grid.arrange(gA,gB,gC,gD,gE,gF,gG,gH,gI, ncol = 3, nrow=3)
+  dev.off()
+}
+
+# Individual plots for each alpha 
+ARTICLE_FOR_GGPLOT_RR <- function(Post_Val_Matrix, title, subtitle, max, is.7){
+  # Packages needed
+  require(ggplot2)
+  require(devtools)
+  require(metR) # IF not installed: install_github("eliocamp/metR")
+  
+  df <- as.data.frame((Post_Val_Matrix)) # Make the output a data.frame
+  out <- list()                             # Generate and out in list format 
+  out.bo <- list()                          # Generate and out in list format
+  for(i in 1:length(df)){                   # Loop for each column of the data.frame (that corresponds to Wild. Size)
+    out.temp <- df[1:20,i]    # Select all rows in each column and make them a data.frame
+    out[[i]] <- out.temp      # Put all the rows in data.frame format into the out list 
+  }
+  for (e in 1:20) {             # For every 20 times 
+    ee<- data.frame(out[[e]],rep(e,times=20),seq(from=0.05, to=1, by=0.05)) # create a new data.frame with the Richness/area/intensity
+    colnames(ee) <- c("Richness","area","intensity") # Change column names
+    out.bo[[e]] <- ee
+  }
+  final <- do.call(rbind,out.bo) # Joints the several lists objects created in one big data.frame
+  final[,1] <-(100/final[,1])/100
+  
+  ggplot(final,aes(x=area, y=intensity))+ # Condition that if the minimum richness is SMALLER than 90 will follow 
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005),
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue. LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "Spectral",direction =1, limits = c(0,1))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    # Sets the contour by Richness. BINWIDTH: the value between each contour line 
+    geom_contour(aes(z=Richness), colour="black",size=0.5, lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 0.4)+
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    # Determines the labels with a white STROKE below them
+    geom_text_contour(aes(z = Richness),stroke = 0.2, size= 10, rotate = F,check_overlap=T)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 18, face = "bold"))
+}
+```
+
+### _Figure 5, Supplementary S5 and S6 - Simulated wildfires DR_
+```{r Simulated wildfires DR - Figure 5, Supplementary S5 and S6, eval=FALSE}
+# Plot to combine all individual articles made with the function ARTICLE_FOR_GGPLOT
+Combined_article_plot_DR <- function(Post_Val_Matrix_T100, PreFire_Val_Matri, file_name, iterations ){
+  plot_Post_fire_1 <- ARTICLE_FOR_GGPLOT_Rich_Change_Rate(Post_Val_Matrix=Post_Val_Matrix_T100[[1]][[1]],
+                                                          PreFire_Val_Matri=PreFire_Val_Matri[[1]][[1]], 
+                                                          title = iterations,subtitle = "250 m", max=22)  
+  plot_Post_fire_2 <- ARTICLE_FOR_GGPLOT_Rich_Change_Rate(Post_Val_Matrix=Post_Val_Matrix_T100[[1]][[2]],
+                                                          PreFire_Val_Matri=PreFire_Val_Matri[[1]][[2]], 
+                                                          iterations,"500 m", max=22)  
+  plot_Post_fire_3 <- ARTICLE_FOR_GGPLOT_Rich_Change_Rate(Post_Val_Matrix=Post_Val_Matrix_T100[[1]][[3]],
+                                                          PreFire_Val_Matri=PreFire_Val_Matri[[1]][[3]], 
+                                                          iterations,"1000 m", max=22)  
+  plot_Post_fire_4 <- ARTICLE_FOR_GGPLOT_Rich_Change_Rate(Post_Val_Matrix=Post_Val_Matrix_T100[[1]][[4]],
+                                                          PreFire_Val_Matri=PreFire_Val_Matri[[1]][[4]], 
+                                                          iterations,"1500 m", max=22)  
+  plot_Post_fire_5 <- ARTICLE_FOR_GGPLOT_Rich_Change_Rate(Post_Val_Matrix=Post_Val_Matrix_T100[[1]][[5]],
+                                                          PreFire_Val_Matri=PreFire_Val_Matri[[1]][[5]], 
+                                                          iterations,"2000 m", max=22)  
+  plot_Post_fire_6 <- ARTICLE_FOR_GGPLOT_Rich_Change_Rate(Post_Val_Matrix=Post_Val_Matrix_T100[[1]][[6]],
+                                                          PreFire_Val_Matri=PreFire_Val_Matri[[1]][[6]], 
+                                                          iterations,"2500 m", max=22)  
+  plot_Post_fire_7 <- ARTICLE_FOR_GGPLOT_Rich_Change_Rate(Post_Val_Matrix=Post_Val_Matrix_T100[[1]][[7]],
+                                                          PreFire_Val_Matri=PreFire_Val_Matri[[1]][[7]], 
+                                                          iterations,"3000 m", max=22)  
+  plot_Post_fire_8 <- ARTICLE_FOR_GGPLOT_Rich_Change_Rate(Post_Val_Matrix=Post_Val_Matrix_T100[[1]][[8]],
+                                                          PreFire_Val_Matri=PreFire_Val_Matri[[1]][[8]], 
+                                                          iterations,"Percolation distance (3842 m)", max=22)  
+  plot_Post_fire_9 <- ARTICLE_FOR_GGPLOT_Rich_Change_Rate(Post_Val_Matrix=Post_Val_Matrix_T100[[1]][[9]],
+                                                          PreFire_Val_Matri=PreFire_Val_Matri[[1]][[9]], 
+                                                          iterations,"5000 m", max=24)  
+  
+  ####Els multiplots PER FUNCTIONAL TRAITS AFTER###
+  library(gtable)    
+  library(grid)
+  library(gridExtra) 
+  
+  # Get the gtables
+  gA <- ggplotGrob(plot_Post_fire_1)
+  gB <- ggplotGrob(plot_Post_fire_2)
+  gC <- ggplotGrob(plot_Post_fire_3)
+  gD <- ggplotGrob(plot_Post_fire_4)
+  gE <- ggplotGrob(plot_Post_fire_5)
+  gF <- ggplotGrob(plot_Post_fire_6)
+  gG <- ggplotGrob(plot_Post_fire_7)
+  gH <- ggplotGrob(plot_Post_fire_8)
+  gI <- ggplotGrob(plot_Post_fire_9)
+  
+  # Arrange the two charts
+  # The legend boxes are centered
+  grid.newpage()
+  png(filename = paste("C:/Users/Cunilleramontcusi/Desktop/",file_name,".png", sep=""),width=14000,height=12000,units="px",res=800)
+  grid.arrange(gA,gB,gC,gD,gE,gF,gG,gH,gI, ncol = 3, nrow=3)
+  dev.off()
+}
+
+# Individual plots for each alpha 
+ARTICLE_FOR_GGPLOT_DR <- function(Post_Val_Matrix_T100, PreFire_Val_Matri, title, subtitle, max){
+  # Packages needed
+  require(ggplot2)
+  require(devtools)
+  require(metR) # IF not installed: install_github("eliocamp/metR")
+  
+  df <- as.data.frame((Post_Val_Matrix_T100)) # Make the output a data.frame
+  out <- list()                             # Generate and out in list format 
+  out.bo <- list()                          # Generate and out in list format
+  for(i in 1:length(df)){                   # Loop for each column of the data.frame (that corresponds to Wild. Size)
+    out.temp <- df[1:20,i]    # Select all rows in each column and make them a data.frame
+    out[[i]] <- out.temp      # Put all the rows in data.frame format into the out list 
+  }
+  for (e in 1:20) {             # For every 20 times 
+    ee<- data.frame(out[[e]],rep(e,times=20),seq(from=0.05, to=1, by=0.05)) # create a new data.frame with the Richness/area/intensity
+    colnames(ee) <- c("Richness","area","intensity") # Change column names
+    out.bo[[e]] <- ee
+  }
+  final <- do.call(rbind,out.bo)
+  
+  df <- as.data.frame((PreFire_Val_Matri)) # Make the output a data.frame
+  out <- list()                             # Generate and out in list format 
+  out.bo <- list()                          # Generate and out in list format
+  for(i in 1:length(df)){                   # Loop for each column of the data.frame (that corresponds to Wild. Size)
+    out.temp <- df[1:20,i]    # Select all rows in each column and make them a data.frame
+    out[[i]] <- out.temp      # Put all the rows in data.frame format into the out list 
+  }
+  for (e in 1:20) {             # For every 20 times 
+    ee<- data.frame(out[[e]],rep(e,times=20),seq(from=0.05, to=1, by=0.05)) # create a new data.frame with the Richness/area/intensity
+    colnames(ee) <- c("Richness","area","intensity") # Change column names
+    out.bo[[e]] <- ee
+  }
+  PreFire_final <- do.call(rbind,out.bo)
+  
+  final[,1] <- (PreFire_final[,1]*100)/final
+  final[,1] <- ifelse(final[,1]>100,100,final[,1])
+  
+  ggplot(final,aes(x=area, y=intensity))+ # Condition that if the minimum richness is SMALLER than 90 will follow 
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005),
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue. LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "Spectral",direction =1, limits = c(0,100))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    # Sets the contour by Richness. BINWIDTH: the value between each contour line 
+    geom_contour(aes(z=Richness), colour="black",size=0.5, lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 30)+
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    # Determines the labels with a white STROKE below them
+    geom_text_contour(aes(z = Richness),stroke = 0.2, size= 10, rotate = F,check_overlap=T)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 18, face = "bold"))
+}
+```
+
+### _Figure 5, Supplementary S5 and S6 - Simulated wildfires Average Richness at T1_
+```{r Simulated wildfires Average Richness at T1 - Figure 5, Supplementary S5 and S6, eval=FALSE}
+# Plot to combine all individual articles made with the function ARTICLE_FOR_GGPLOT
+Combined_article_plot_T1 <- function(Post_Val_Matrix, file_name, iterations ){
+  plot_Post_fire_1 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[1]],title = iterations,subtitle = "250 m", max = 22,is.7 =1 )  
+  plot_Post_fire_2 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[2]],iterations,"500 m", max = 22,is.7 =2 )  
+  plot_Post_fire_3 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[3]],iterations,"1000 m", max = 22,is.7 =3 )  
+  plot_Post_fire_4 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[4]],iterations,"1500 m", max = 22,is.7 =4 )  
+  plot_Post_fire_5 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[5]],iterations,"2000 m", max = 22,is.7 =5 )  
+  plot_Post_fire_6 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[6]],iterations,"2500 m", max = 22,is.7 =6 )  
+  plot_Post_fire_7 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[7]],iterations,"3000 m", max = 22,is.7 =7 )  
+  plot_Post_fire_8 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[8]],iterations,"Percolation distance (3842 m)", max = 22,is.7 =8 )  
+  plot_Post_fire_9 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[9]],iterations,"5000 m", max = 24,is.7 =9 )  
+  
+  ####Els multiplots PER FUNCTIONAL TRAITS AFTER###
+  library(gtable)    
+  library(grid)
+  library(gridExtra) 
+  
+  # Get the gtables
+  gA <- ggplotGrob(plot_Post_fire_1)
+  gB <- ggplotGrob(plot_Post_fire_2)
+  gC <- ggplotGrob(plot_Post_fire_3)
+  gD <- ggplotGrob(plot_Post_fire_4)
+  gE <- ggplotGrob(plot_Post_fire_5)
+  gF <- ggplotGrob(plot_Post_fire_6)
+  gG <- ggplotGrob(plot_Post_fire_7)
+  gH <- ggplotGrob(plot_Post_fire_8)
+  gI <- ggplotGrob(plot_Post_fire_9)
+  
+  # Arrange the two charts
+  # The legend boxes are centered
+  grid.newpage()
+  png(filename = paste("Figures/",file_name,".png", sep=""),width=14000,height=12000,units="px",res=800)
+  grid.arrange(gA,gB,gC,gD,gE,gF,gG,gH,gI, ncol = 3, nrow=3)
+  dev.off()
+}
+
+# Individual plots for each alpha 
+ARTICLE_FOR_GGPLOT_T1 <- function(Post_Val_Matrix, title, subtitle, max, is.7){
+  # Packages needed
+  require(ggplot2)
+  require(devtools)
+  require(metR) # IF not installed: install_github("eliocamp/metR")
+  
+  df <- as.data.frame((Post_Val_Matrix)) # Make the output a data.frame
+  out <- list()                             # Generate and out in list format 
+  out.bo <- list()                          # Generate and out in list format
+  for(i in 1:length(df)){                   # Loop for each column of the data.frame (that corresponds to Wild. Size)
+    out.temp <- df[1:20,i]    # Select all rows in each column and make them a data.frame
+    out[[i]] <- out.temp      # Put all the rows in data.frame format into the out list 
+  }
+  for (e in 1:20) {             # For every 20 times 
+    ee<- data.frame(out[[e]],rep(e,times=20),seq(from=0.05, to=1, by=0.05)) # create a new data.frame with the Richness/area/intensity
+    colnames(ee) <- c("Richness","area","intensity") # Change column names
+    out.bo[[e]] <- ee
+  }
+  final <- do.call(rbind,out.bo) # Joints the several lists objects created in one big data.frame
+  if(is.7==7)#;min(final[,1])>22) # Condition that if the minimum richness is GREATER than 90 will follow the below path
+    plot <-ggplot(final,aes(x=area, y=intensity))+
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005), 
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "Spectral",direction =1, limits = c(0,max))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    geom_contour(aes(z=Richness), colour="black",size=0.5, lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 2)+
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 16, face = "bold"))
+  else plot <-ggplot(final,aes(x=area, y=intensity))+ # Condition that if the minimum richness is SMALLER than 90 will follow 
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005),
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue. LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "Spectral",direction =1, limits = c(0,max))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    # Sets the contour by Richness. BINWIDTH: the value between each contour line 
+    geom_contour(aes(z=Richness), colour="black",size=0.5, lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 2)+
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    # Determines the labels with a white STROKE below them
+    geom_text_contour(aes(z = Richness),stroke = 0.2, size= 10, rotate = F,check_overlap=T)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 18, face = "bold"))
+}
+```
+
+### _Figure 5, Supplementary S5 and S6 - Simulated wildfires Average Richness at T100_
+```{r Simulated wildfires Average Richness at T100 - Figure 5, Supplementary S5 and S6, eval=FALSE}
+# Plot to combine all individual articles made with the function ARTICLE_FOR_GGPLOT
+Combined_article_plot_T100 <- function(Post_Val_Matrix, file_name, iterations ){
+  plot_Post_fire_1 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[1]],title = iterations,subtitle = "250 m", max = 22,is.7 =1 )  
+  plot_Post_fire_2 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[2]],iterations,"500 m", max = 22,is.7 =2 )  
+  plot_Post_fire_3 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[3]],iterations,"1000 m", max = 22,is.7 =3 )  
+  plot_Post_fire_4 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[4]],iterations,"1500 m", max = 22,is.7 =4 )  
+  plot_Post_fire_5 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[5]],iterations,"2000 m", max = 22,is.7 =5 )  
+  plot_Post_fire_6 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[6]],iterations,"2500 m", max = 22,is.7 =6 )  
+  plot_Post_fire_7 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[7]],iterations,"3000 m", max = 22,is.7 =7 )  
+  plot_Post_fire_8 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[8]],iterations,"Percolation distance (3842 m)", max = 22,is.7 =8 )  
+  plot_Post_fire_9 <- ARTICLE_FOR_GGPLOT(Post_Val_Matrix[[1]][[9]],iterations,"5000 m", max = 24,is.7 =9 )  
+  
+  ####Els multiplots PER FUNCTIONAL TRAITS AFTER###
+  library(gtable)    
+  library(grid)
+  library(gridExtra) 
+  
+  # Get the gtables
+  gA <- ggplotGrob(plot_Post_fire_1)
+  gB <- ggplotGrob(plot_Post_fire_2)
+  gC <- ggplotGrob(plot_Post_fire_3)
+  gD <- ggplotGrob(plot_Post_fire_4)
+  gE <- ggplotGrob(plot_Post_fire_5)
+  gF <- ggplotGrob(plot_Post_fire_6)
+  gG <- ggplotGrob(plot_Post_fire_7)
+  gH <- ggplotGrob(plot_Post_fire_8)
+  gI <- ggplotGrob(plot_Post_fire_9)
+  
+  # Arrange the two charts
+  # The legend boxes are centered
+  grid.newpage()
+  png(filename = paste("Figures/",file_name,".png", sep=""),width=14000,height=12000,units="px",res=800)
+  grid.arrange(gA,gB,gC,gD,gE,gF,gG,gH,gI, ncol = 3, nrow=3)
+  dev.off()
+}
+
+# Individual plots for each alpha 
+ARTICLE_FOR_GGPLOT_T100 <- function(Post_Val_Matrix, title, subtitle, max, is.7){
+  # Packages needed
+  require(ggplot2)
+  require(devtools)
+  require(metR) # IF not installed: install_github("eliocamp/metR")
+  
+  df <- as.data.frame((Post_Val_Matrix)) # Make the output a data.frame
+  out <- list()                             # Generate and out in list format 
+  out.bo <- list()                          # Generate and out in list format
+  for(i in 1:length(df)){                   # Loop for each column of the data.frame (that corresponds to Wild. Size)
+    out.temp <- df[1:20,i]    # Select all rows in each column and make them a data.frame
+    out[[i]] <- out.temp      # Put all the rows in data.frame format into the out list 
+  }
+  for (e in 1:20) {             # For every 20 times 
+    ee<- data.frame(out[[e]],rep(e,times=20),seq(from=0.05, to=1, by=0.05)) # create a new data.frame with the Richness/area/intensity
+    colnames(ee) <- c("Richness","area","intensity") # Change column names
+    out.bo[[e]] <- ee
+  }
+  final <- do.call(rbind,out.bo) # Joints the several lists objects created in one big data.frame
+  if(is.7==7)#;min(final[,1])>22) # Condition that if the minimum richness is GREATER than 90 will follow the below path
+    plot <-ggplot(final,aes(x=area, y=intensity))+
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005), 
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "Spectral",direction =1, limits = c(0,max))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    geom_contour(aes(z=Richness), colour="black",size=0.5, lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 2)+
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 16, face = "bold"))
+  else plot <-ggplot(final,aes(x=area, y=intensity))+ # Condition that if the minimum richness is SMALLER than 90 will follow 
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005),
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue. LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "Spectral",direction =1, limits = c(0,max))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    # Sets the contour by Richness. BINWIDTH: the value between each contour line 
+    geom_contour(aes(z=Richness), colour="black",size=0.5, lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 2)+
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    # Determines the labels with a white STROKE below them
+    geom_text_contour(aes(z = Richness),stroke = 0.2, size= 10, rotate = F,check_overlap=T)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 18, face = "bold"))
+}
+```
+
+### _Supplementary S6C - Simulated wildfires Number of iterations (IT)_
+```{r Simulated wildfires Number of iterations (IT) - Supplementary S6C, eval=FALSE}
+# Plot to combine all individual articles made with the function ARTICLE_FOR_GGPLOT
+Combined_article_plot_iter <- function(Post_Val_Matrix, file_name, iterations ){
+  plot_Post_fire_1 <- ARTICLE_FOR_GGPLOT_iter(Post_Val_Matrix[[2]][[1]],iterations,"250 m")  
+  plot_Post_fire_2 <- ARTICLE_FOR_GGPLOT_iter(Post_Val_Matrix[[2]][[2]],iterations,"500 m")  
+  plot_Post_fire_3 <- ARTICLE_FOR_GGPLOT_iter(Post_Val_Matrix[[2]][[3]],iterations,"1000 m")  
+  plot_Post_fire_4 <- ARTICLE_FOR_GGPLOT_iter(Post_Val_Matrix[[2]][[4]],iterations,"1500 m")  
+  plot_Post_fire_5 <- ARTICLE_FOR_GGPLOT_iter(Post_Val_Matrix[[2]][[5]],iterations,"2000 m")  
+  plot_Post_fire_6 <- ARTICLE_FOR_GGPLOT_iter(Post_Val_Matrix[[2]][[6]],iterations,"2500 m")  
+  plot_Post_fire_7 <- ARTICLE_FOR_GGPLOT_iter(Post_Val_Matrix[[2]][[7]],iterations,"3000 m")  
+  plot_Post_fire_8 <- ARTICLE_FOR_GGPLOT_iter(Post_Val_Matrix[[2]][[8]],iterations,"Percolation distance (3842 m)")  
+  plot_Post_fire_9 <- ARTICLE_FOR_GGPLOT_iter(Post_Val_Matrix[[2]][[9]],iterations,"5000 m")  
+  
+  ####Els multiplots PER FUNCTIONAL TRAITS AFTER###
+  library(gtable)    
+  library(grid)
+  library(gridExtra) 
+  
+  # Get the gtables
+  gA <- ggplotGrob(plot_Post_fire_1)
+  gB <- ggplotGrob(plot_Post_fire_2)
+  gC <- ggplotGrob(plot_Post_fire_3)
+  gD <- ggplotGrob(plot_Post_fire_4)
+  gE <- ggplotGrob(plot_Post_fire_5)
+  gF <- ggplotGrob(plot_Post_fire_6)
+  gG <- ggplotGrob(plot_Post_fire_7)
+  gH <- ggplotGrob(plot_Post_fire_8)
+  gI <- ggplotGrob(plot_Post_fire_9)
+  
+  # Arrange the two charts
+  # The legend boxes are centered
+  grid.newpage()
+  png(filename = paste("Figures/",file_name,".png", sep=""),width=14000,height=12000,units="px",res=800)
+  grid.arrange(gA,gB,gC,gD,gE,gF,gG,gH,gI, ncol = 3, nrow=3)
+  dev.off()
+}
+
+# Individual plots for each alpha 
+ARTICLE_FOR_GGPLOT_iter <- function(Post_Val_Matrix, title, subtitle){
+  # Packages needed
+  require(ggplot2)
+  require(devtools)
+  require(metR) # IF not installed: install_github("eliocamp/metR")
+  
+  df <- as.data.frame((Post_Val_Matrix)) # Make the output a data.frame
+  out <- list()                             # Generate and out in list format 
+  out.bo <- list()                          # Generate and out in list format
+  for(i in 1:length(df)){                   # Loop for each column of the data.frame (that corresponds to Wild. Size)
+    out.temp <- df[1:20,i]    # Select all rows in each column and make them a data.frame
+    out[[i]] <- out.temp      # Put all the rows in data.frame format into the out list 
+  }
+  for (e in 1:20) {             # For every 20 times 
+    ee<- data.frame(out[[e]],rep(e,times=20),seq(from=0.05, to=1, by=0.05)) # create a new data.frame with the Richness/area/intensity
+    colnames(ee) <- c("Richness","area","intensity") # Change column names
+    out.bo[[e]] <- ee
+  }
+  final <- do.call(rbind,out.bo) # Joints the several lists objects created in one big data.frame  
+  if(mean(final[,1])<5) # Condition that if the minimum richness is GREATER than 90 will follow the below path
+    plot <-ggplot(final,aes(x=area, y=intensity))+
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005), 
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "PuOr",direction =-1, limits = c(0,100))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    geom_contour(aes(z=Richness), colour="black",size=0.5, lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 10)+
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 16, face = "bold"))
+  else plot <-ggplot(final,aes(x=area, y=intensity))+ # Condition that if the minimum richness is SMALLER than 90 will follow 
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005),
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue. LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "PuOr",direction =-1, limits = c(0,100))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    # Sets the contour by Richness. BINWIDTH: the value between each contour line 
+    geom_contour(aes(z=Richness), colour="black",size=0.5, lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 10)+
+    geom_point(aes(x=10.5, y=0.3), col="red", size=9, shape=21 , fill="black",stroke=2)+
+    # Determines the labels with a white STROKE below them
+    geom_text_contour(aes(z = Richness),stroke = 0.2, size= 10, rotate = F,check_overlap=T)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 18, face = "bold"))
+}
+```
+
+### _Supplementary S7 - Simulated wildfires Richness standard deviation at T1 AND t100_
+```{r Simulated wildfires Richness standard deviation at T1 - Supplementary S67, eval=FALSE}
+# Plot to combine all individual articles made with the function ARTICLE_FOR_GGPLOT
+Combined_article_plot_sd <- function(Post_Val_Matrix, file_name, iterations ){
+  plot_Post_fire_1 <- ARTICLE_FOR_GGPLOT_sd(Post_Val_Matrix[[3]][[1]],iterations,"250 m")  
+  plot_Post_fire_2 <- ARTICLE_FOR_GGPLOT_sd(Post_Val_Matrix[[3]][[2]],iterations,"500 m")  
+  plot_Post_fire_3 <- ARTICLE_FOR_GGPLOT_sd(Post_Val_Matrix[[3]][[3]],iterations,"1000 m")  
+  plot_Post_fire_4 <- ARTICLE_FOR_GGPLOT_sd(Post_Val_Matrix[[3]][[4]],iterations,"1500 m")  
+  plot_Post_fire_5 <- ARTICLE_FOR_GGPLOT_sd(Post_Val_Matrix[[3]][[5]],iterations,"2000 m")  
+  plot_Post_fire_6 <- ARTICLE_FOR_GGPLOT_sd(Post_Val_Matrix[[3]][[6]],iterations,"2500 m")  
+  plot_Post_fire_7 <- ARTICLE_FOR_GGPLOT_sd(Post_Val_Matrix[[3]][[7]],iterations,"3000 m")  
+  plot_Post_fire_8 <- ARTICLE_FOR_GGPLOT_sd(Post_Val_Matrix[[3]][[8]],iterations,"Percolation distance (3842 m)")  
+  plot_Post_fire_9 <- ARTICLE_FOR_GGPLOT_sd(Post_Val_Matrix[[3]][[9]],iterations,"5000 m")  
+  
+  ####Els multiplots PER FUNCTIONAL TRAITS AFTER###
+  library(gtable)    
+  library(grid)
+  library(gridExtra) 
+  
+  # Get the gtables
+  gA <- ggplotGrob(plot_Post_fire_1)
+  gB <- ggplotGrob(plot_Post_fire_2)
+  gC <- ggplotGrob(plot_Post_fire_3)
+  gD <- ggplotGrob(plot_Post_fire_4)
+  gE <- ggplotGrob(plot_Post_fire_5)
+  gF <- ggplotGrob(plot_Post_fire_6)
+  gG <- ggplotGrob(plot_Post_fire_7)
+  gH <- ggplotGrob(plot_Post_fire_8)
+  gI <- ggplotGrob(plot_Post_fire_9)
+  
+  # Arrange the two charts
+  # The legend boxes are centered
+  grid.newpage()
+  png(filename = paste("Figures/",file_name,".png", sep=""),width=14000,height=12000,units="px",res=800)
+  grid.arrange(gA,gB,gC,gD,gE,gF,gG,gH,gI, ncol = 3, nrow=3)
+  dev.off()
+}
+
+# Individual plots for each alpha 
+ARTICLE_FOR_GGPLOT_sd <- function(Post_Val_Matrix, title, subtitle){
+  # Packages needed
+  require(ggplot2)
+  require(devtools)
+  require(metR) # IF not installed: install_github("eliocamp/metR")
+  
+  df <- as.data.frame((Post_Val_Matrix)) # Make the output a data.frame
+  out <- list()                             # Generate and out in list format 
+  out.bo <- list()                          # Generate and out in list format
+  for(i in 1:length(df)){                   # Loop for each column of the data.frame (that corresponds to Wild. Size)
+    out.temp <- df[1:20,i]    # Select all rows in each column and make them a data.frame
+    out[[i]] <- out.temp      # Put all the rows in data.frame format into the out list 
+  }
+  for (e in 1:20) {             # For every 20 times 
+    ee<- data.frame(out[[e]],rep(e,times=20),seq(from=0.05, to=1, by=0.05)) # create a new data.frame with the Richness/area/intensity
+    colnames(ee) <- c("Richness","area","intensity") # Change column names
+    out.bo[[e]] <- ee
+  }
+  final <- do.call(rbind,out.bo) # Joints the several lists objects created in one big data.frame
+  final[which(is.na(final)),1] <- 0
+  
+#return(final)
+  if(min(final[,1])>90) # Condition that if the minimum richness is GREATER than 90 will follow the below path
+    plot <-ggplot(final,aes(x=area, y=intensity))+
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005), 
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "Spectral",direction =1, limits = c(0,100))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title,subtitle = subtitle)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 16, face = "bold"))
+  else plot <-ggplot(final,aes(x=area, y=intensity))+ # Condition that if the minimum richness is SMALLER than 90 will follow 
+    # Raster with all the data, hjust and vjust hide the bakground and INTERPOLATE= T dissolve the rasters 
+    geom_raster(aes(x = area,y=intensity,fill=Richness),hjust=1,vjust=1,interpolate = T)+
+    # Scale y axis and set the levels
+    scale_y_continuous(limits = c(0.05,1),expand = c(0,0.005),
+                       breaks = seq(from=0.05, to=1, by=0.05),
+                       labels =c("0","10","","20","","30","","40","","50",
+                                 "","60","","70","","80","","90","","100"))+
+    # Scale x axis and set the levels--> WARNING: The maximum distance is 21km!! IS A LIE!
+    scale_x_continuous(limits = c(1,20),expand = c(0,0.1),
+                       breaks = seq(from=1, to=20, by=1),
+                       labels =c("0","2","","4","","6","","8","","10",
+                                 "","12","","14","","16","","18","","20"))+
+    # Scalate thte colours, spectral means going from red to blue. LIMITS force the range to be btween 0 & 100
+    scale_fill_distiller(palette = "BrBG",direction =-1, limits = c(0,20))+
+    # Labs 
+    labs(x="Size (km)",y="Intensity (%)",title = title, subtitle = subtitle)+
+    # Sets the contour by Richness. BINWIDTH: the value between each contour line 
+    geom_contour(aes(z=Richness), colour="black",size=0.5, lty="solid",stat="contour",
+                 lineend="round",linejoin ="round",binwidth = 1)+
+    # Determines the labels with a white STROKE below them
+    geom_text_contour(aes(z = Richness),stroke = 0.2, size= 15, rotate = F,check_overlap=T)+
+    # Theme stuff
+    theme_classic()+
+    theme(axis.line = element_line(size = 0.05, linetype = "solid"), 
+          axis.ticks = element_blank(), 
+          panel.grid.major = element_blank(), 
+          panel.grid.minor = element_blank(),
+          plot.margin = margin(0.4,1.5,0.4,1.5, "cm"),
+          axis.title = element_text(size = 18,face = "bold"), 
+          axis.text = element_text(size = 18,face = "bold"), 
+          axis.text.x = element_text(size = 17, color = "black"), 
+          axis.text.y = element_text(size = 17, color = "black"), 
+          legend.position = "none",
+          legend.text = element_blank(),
+          legend.title = element_blank(),
+          panel.background = element_rect(colour = "black", size = 2.5, linetype = "solid"),
+          plot.background = element_rect(colour = "black", size = 1, linetype = "solid"), 
+          legend.background = element_blank(),
+          plot.subtitle = element_text(size = 18,face = "bold", colour = "gray0"),
+          plot.title = element_text(size = 18, face = "bold"))
+}
+```
+
+## *Figure 3* 
+### _Figure 3-T1 and Supplementary S6D. Plot for whole community_
+```{r Plots T1 Figure 3 data FakeFires,eval=FALSE}
+#Alpha 0.1
+png(filename = "Figures/Globalplot_01.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_rec_ENTRADA_0.1,"Entire metacommunity T1","Shared = 0.1")
+dev.off()
+
+#Alpha 0.3
+png(filename = "Figures/Globalplot_03.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_rec_ENTRADA_0.3,"Entire metacommunity T1","Shared = 0.3")
+dev.off()
+#Alpha 0.5
+png(filename = "Figures/Globalplot_05.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_rec_ENTRADA_0.5,"Entire metacommunity T1","Shared = 0.5")
+dev.off()
+#Alpha 0.7
+png(filename = "Figures/Globalplot_07.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_rec_ENTRADA_0.7,"Entire metacommunity T1","Shared = 0.7")
+dev.off()
+#Alpha 0.9
+png(filename = "Figures/Globalplot_09.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_rec_ENTRADA_0.9,"Entire metacommunity T1","Shared = 0.9")
+dev.off()
+```
+
+### _Figure 3-T100 and Supplementary S6D. Plot for whole community at T100_
+```{r Plots_T100 Figure 3 FakeFires data, eval=FALSE}
+#Alpha 0.1
+png(filename = "Figures/Globalplot_01_T100.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_0.1_T100,"Entire metacommunity T100","Shared = 0.1")
+dev.off()
+#Alpha 0.3
+png(filename = "Figures/Globalplot_03_T100.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_0.3_T100,"Entire metacommunity T100","Shared = 0.3")
+dev.off()
+#Alpha 0.5
+png(filename = "Figures/Globalplot_05_T100.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_0.5_T100,"Entire metacommunity T100","Shared = 0.5")
+dev.off()
+#Alpha 0.7
+png(filename = "Figures/Globalplot_07_T100.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_0.7_T100,"Entire metacommunity T100","Shared = 0.7")
+dev.off()
+#Alpha 0.9
+png(filename = "Figures/Globalplot_09_T100.png",width=14000,height=12000,units="px",res=1000)
+GLOBAL_ARTICLE_FOR_GGPLOT(Burn_0.9_T100,"Entire metacommunity T100","Shared = 0.9")
+dev.off()
+```
+
+### *Figure 3 article at alpha=0.5*
+```{r Figure 3, echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Figures to share/Figure 3.jpg")
+```
+
+### *Supplementary Figure 3 =0.5*
+```{r Figure 3_Alpha 01,fig.cap="Alpha 0.1 T1", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Globalplot_01.png")
+```
+
+```{r Figure 3_Alpha 01 T100,fig.cap="Alpha 0.1 T100", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Globalplot_01_T100.png")
+```
+
+```{r Figure 3_Alpha 03,fig.cap="Alpha 0.3 T1", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Globalplot_03.png")
+```
+
+```{r Figure 3_Alpha 03 T100,fig.cap="Alpha 0.3 T100", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Globalplot_03_T100.png")
+```
+
+```{r Figure 3_Alpha 05,fig.cap="Alpha 0.5 T1", echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Imatges-Ecography/Globalplot_05.png")
+```
+
+```{r Figure 3_Alpha 05 T100,fig.cap="Alpha 0.5 T100", echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Imatges-Ecography/Globalplot_05_T100.png")
+```
+
+```{r Figure 3_Alpha 07,fig.cap="Alpha 0.7 T1", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Globalplot_07.png")
+```
+
+```{r Figure 3_Alpha 07 T100,fig.cap="Alpha 0.7 T100", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Globalplot_07_T100.png")
+```
+
+```{r Figure 3_Alpha 09 ,fig.cap="Alpha 0.9 T1", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Globalplot_09.png")
+```
+
+```{r Figure 3_Alpha 09 T100,fig.cap="Alpha 0.9 T100", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Globalplot_09_T100.png")
+```
+
+
+## *Figure 5*
+### *Figure 5 article - 4 dispersal abilites at alpha=0.5*
+```{r Figure 5_article, echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Figures to share/Figure 5.jpg")
+```
+
+### *Figure 5 complete at alpha=0.5*
+```{r Figure 5_total, echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Figures to share/Supplementary_S4.png")
+```
+
+### _Figure 5-RR and Supplementary S6A. Return Rate(RR)_ 
+```{r RRplots data T100 FakeFires ,eval=FALSE}
+# Plots for every dispersal ability group (9 plots together) - Figure 6D and Supplementary S4
+#Alpha 0.1
+Combined_article_plot(Burn_0.1_T100, file_name ="Alpha 0.1_RR", iterations = "RR")
+#Alpha 0.3
+Combined_article_plot(Burn_0.3_T100, file_name ="Alpha 0.3_RR", iterations = "RR")
+#Alpha 0.5
+Combined_article_plot(Burn_0.5_T100, file_name ="Alpha 0.5_RR", iterations = "RR")
+#Alpha 0.7
+Combined_article_plot(Burn_0.7_T100, file_name ="Alpha 0.7_RR", iterations = "RR")
+#Alpha 0.9
+Combined_article_plot(Burn_0.9_T100, file_name ="Alpha 0.9_RR", iterations = "RR")
+```
+
+### *RR Supplementary S6A*
+
+```{r Figure Supplementary 6A 01,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.1
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.1_RR.png")
+```
+
+```{r Figure Supplementary 6A 03,fig.cap="Alpha 0.3", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.3
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.3_RR.png")
+```
+
+```{r Figure Supplementary 6A 05,fig.cap="Alpha 0.5", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.5
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Imatges-Ecography/Alpha 0.5_RR.png")
+```
+
+```{r Figure Supplementary 6A 07,fig.cap="Alpha 0.7", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.7
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.7_RR.png")
+```
+
+```{r Figure Supplementary 6A 09 ,fig.cap="Alpha 0.9", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.9
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.9_RR.png")
+```
+
+### _Figure 5-DR and Supplementary S6B.Diversity recovery (DR)_ 
+```{r DRplots FakeFires data T100 ,eval=FALSE}
+#Alpha 0.1
+Combined_article_plot_Rich_Change_Rate(Burn_0.1_T100,
+                                       Burn_rec_ENTRADA_0.1,
+                                       file_name ="Alpha 0.1_DR", iterations = "DR")
+#Alpha 0.3
+Combined_article_plot_Rich_Change_Rate(Burn_0.3_T100,
+                                       Burn_rec_ENTRADA_0.3,
+                                       file_name ="Alpha 0.3_DR", iterations = "DR")
+#Alpha 0.5
+Combined_article_plot_Rich_Change_Rate(Burn_0.5_T100,
+                                       Burn_rec_ENTRADA_0.5,
+                                       file_name ="Alpha 0.5_DR", iterations = "DR")
+#Alpha 0.7
+Combined_article_plot_Rich_Change_Rate(Burn_0.7_T100,
+                                       Burn_rec_ENTRADA_0.7,
+                                       file_name ="Alpha 0.7_DR", iterations = "DR")
+#Alpha 0.9
+Combined_article_plot_Rich_Change_Rate(Burn_0.9_T100,
+                                       Burn_rec_ENTRADA_0.9,
+                                       file_name ="Alpha 0.9_DR", iterations = "DR")
+```
+
+### *DR Supplementary S6B*
+```{r Figure Supplementary 6B 01 ,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.1
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.1_DR.png")
+```
+
+```{r Figure Supplementary 6B 03,fig.cap="Alpha 0.3", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.3
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.3_DR.png")
+```
+
+```{r Figure Supplementary 6B 05 ,fig.cap="Alpha 0.5", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.5
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Imatges-Ecography/Alpha 0.5_DR.png")
+```
+
+```{r Figure Supplementary 6B 07,fig.cap="Alpha 0.7", echo=FALSE, out.width='100%',  results = 'markup'}
+##Alpha 0.7
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.7_DR.png")
+```
+
+```{r Figure Supplementary 6B 09,fig.cap="Alpha 0.9", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.9
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.9_DR.png")
+```
+
+### _Figure 5-T1 and Supplementary S6D. Plots for every dispersal ability group (9 plots together)_
+```{r Plots T1 Figure 5 data FakeFires ,eval=FALSE}
+#Alpha 0.1
+Combined_article_plot(Burn_rec_ENTRADA_0.1, file_name ="Alpha 0.1", iterations = "T1")
+#Alpha 0.3
+Combined_article_plot(Burn_rec_ENTRADA_0.3, file_name ="Alpha 0.3", iterations = "T1")
+#Alpha 0.5
+Combined_article_plot(Burn_rec_ENTRADA_0.5, file_name ="Alpha 0.5", iterations = "T1")
+#Alpha 0.7
+Combined_article_plot(Burn_rec_ENTRADA_0.7, file_name ="Alpha 0.7", iterations = "T1")
+#Alpha 0.9
+Combined_article_plot(Burn_rec_ENTRADA_0.9, file_name ="Alpha 0.9", iterations = "T1")
+```
+
+### *T1 Supplementary S6D*
+```{r Figure T1 Supplementary S6D 01,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.1
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.1.png")
+```
+
+```{r Figure T1 Supplementary S6D 03,fig.cap="Alpha 0.3", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.3
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.3.png")
+```
+
+```{r Figure T1 Supplementary S6D 05,fig.cap="Alpha 0.5", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.5
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Imatges-Ecography/Alpha 0.5.png")
+```
+
+```{r Figure T1 Supplementary S6D 07,fig.cap="Alpha 0.7", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.7
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.7.png")
+```
+
+```{r Figure T1 Supplementary S6D 09,fig.cap="Alpha 0.9", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.9
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.9.png")
+```
+
+### _Figure 5-T100 and Supplementary S6D. Richness at T100 plot_ 
+```{r T100plots FakeFires data T100 ,eval=FALSE}
+# Plots for every dispersal ability group (9 plots together) - Figure 6D and Supplementary S4 ####
+#Alpha 0.1
+Combined_article_plot(Burn_0.1_T100, file_name ="Alpha 0.1_T100", iterations = "T100")
+#Alpha 0.3
+Combined_article_plot(Burn_0.3_T100, file_name ="Alpha 0.3_T100", iterations = "T100")
+#Alpha 0.5
+Combined_article_plot(Burn_0.5_T100, file_name ="Alpha 0.5_T100", iterations = "T100")
+#Alpha 0.7
+Combined_article_plot(Burn_0.7_T100, file_name ="Alpha 0.7_T100", iterations = "T100")
+#Alpha 0.9
+Combined_article_plot(Burn_0.9_T100, file_name ="Alpha 0.9_T100", iterations = "T100")
+```
+
+### *T100 Supplementary S6D*
+```{r Figure T100 Supplementary S6D 01,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.1
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.1_T100.png")
+```
+
+```{r Figure T100 Supplementary S6D 03,fig.cap="Alpha 0.3",  echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.3
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.3_T100.png")
+```
+
+```{r Figure T100 Supplementary S6D 05,fig.cap="Alpha 0.5", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.5
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Imatges-Ecography/Alpha 0.5_T100.png")
+```
+
+```{r Figure T100 Supplementary S6D 07,fig.cap="Alpha 0.7", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.7
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.7_T100.png")
+```
+
+```{r Figure T100 Supplementary S6D 09,fig.cap="Alpha 0.9", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.9
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.9_T100.png")
+```
+
+## *Supplementary S6C*
+### _Supplementary S6C T100. SD values of the mean diversity_
+```{r Plots iterationsT100 FakeFires data, eval=FALSE}
+#Alpha 0.1
+Combined_article_plot_iter(Burn_0.1_T100, file_name ="IT_Alpha 0.1_T100", iterations = "T100")
+#Alpha 0.3
+Combined_article_plot_iter(Burn_0.3_T100, file_name ="IT_Alpha 0.3_T100", iterations = "T100")
+#Alpha 0.5
+Combined_article_plot_iter(Burn_0.5_T100, file_name ="IT_Alpha 0.5_T100", iterations = "T100")
+#Alpha 0.7
+Combined_article_plot_iter(Burn_0.7_T100, file_name ="IT_Alpha 0.7_T100", iterations = "T100")
+#Alpha 0.9
+Combined_article_plot_iter(Burn_0.9_T100, file_name ="IT_Alpha 0.9_T100", iterations = "T100")
+```
+
+### *Supplementary S6C*
+```{r Figure Supplementary S6D 01,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.1
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/IT_Alpha 0.1_T100.png")
+```
+
+```{r Figure Supplementary S6D 03,fig.cap="Alpha 0.3", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.3
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/IT_Alpha 0.3_T100.png")
+```
+
+```{r Figure Supplementary S6D 05 ,fig.cap="Alpha 0.5", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.5
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Imatges-Ecography/IT_Alpha 0.5_T100.png")
+```
+
+```{r Figure Supplementary S6D 07,fig.cap="Alpha 0.7", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.7
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/IT_Alpha 0.7_T100.png")
+```
+
+```{r Figure Supplementary S6D 09,fig.cap="Alpha 0.9", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.9
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/IT_Alpha 0.9_T100.png")
+```
+
+
+### _Supplementary S7 T1. SD values of the mean diversity_
+```{r Plots T1 Supplementary Figure S7 FakeFires data ,eval=FALSE}
+#Alpha 0.1
+Combined_article_plot_sd(Burn_rec_ENTRADA_0.1, file_name ="SD_Alpha 0.1", iterations = "T1")
+#Alpha 0.3
+Combined_article_plot_sd(Burn_rec_ENTRADA_0.3, file_name ="SD_Alpha 0.3", iterations = "T1")
+#Alpha 0.5
+Combined_article_plot_sd(Burn_rec_ENTRADA_0.5, file_name ="SD_Alpha 0.5", iterations = "T1")
+#Alpha 0.7
+Combined_article_plot_sd(Burn_rec_ENTRADA_0.7, file_name ="SD_Alpha 0.7", iterations = "T1")
+#Alpha 0.9
+Combined_article_plot_sd(Burn_rec_ENTRADA_0.9, file_name ="SD_Alpha 0.9", iterations = "T1")
+```
+
+### _Supplementary S7 T100. SD values of the mean diversity_
+```{r Plots T100 Supplementary Figure S7 FakeFires, eval=FALSE}
+#Alpha 0.1
+Combined_article_plot_sd(Burn_0.1_T100, file_name ="SD_Alpha 0.1_T100", iterations = "T100")
+#Alpha 0.3
+Combined_article_plot_sd(Burn_0.3_T100, file_name ="SD_Alpha 0.3_T100", iterations = "T100")
+#Alpha 0.5
+Combined_article_plot_sd(Burn_0.5_T100, file_name ="SD_Alpha 0.5_T100", iterations = "T100")
+#Alpha 0.7
+Combined_article_plot_sd(Burn_0.7_T100, file_name ="SD_Alpha 0.7_T100", iterations = "T100")
+#Alpha 0.9
+Combined_article_plot_sd(Burn_0.9_T100, file_name ="SD_Alpha 0.9_T100", iterations = "T100")
+```
+
+### *Supplementary S7*
+```{r Supplementary S7 T1 01,fig.cap="T1 Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.1
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.1.png")
+```
+
+```{r Supplementary S7 T100 01 ,fig.cap="T100 Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.1_T100.png")
+```
+
+```{r Supplementary S7 T1 03,fig.cap="T1 Alpha 0.3", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.3
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.3.png")
+```
+
+```{r Supplementary S7 T100 03,fig.cap="T100 Alpha 0.3", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.3_T100.png")
+```
+
+```{r Supplementary S7 T1 05,fig.cap="T1 Alpha 0.5", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.5
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Imatges-Ecography/SD_Alpha 0.5.png")
+```
+
+```{r Supplementary S7 T100 05,fig.cap="T100 Alpha 0.5", echo=FALSE, out.width='100%',  results = 'markup'}
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Imatges-Ecography/SD_Alpha 0.5_T100.png")
+```
+
+```{r Supplementary S7 T1 07,fig.cap="T1 Alpha 0.7", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.7
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.7.png")
+```
+
+```{r Supplementary S7 T100 07,fig.cap="T100 Alpha 0.7", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.7_T100.png")
+```
+
+```{r Supplementary S7 T1 09,fig.cap="T1 Alpha 0.9", echo=FALSE, out.width='100%',  results = 'markup'}
+#Alpha 0.9
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.9.png")
+```
+
+```{r Supplementary S7 T100 09,fig.cap="T100 Alpha 0.9", echo=FALSE, out.width='100%',  results = 'markup'}
+#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.9_T100.png")
+```
+
+
+
+
+
+
+
+
