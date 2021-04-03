@@ -1,8 +1,8 @@
 ---
 title: "Metacommunity resilience against simulated gradients of wildfire: disturbance intensity and species dispersal ability determine landscape recover capacity"
 author: "David Cunillera-Montcusí, Ana Inés Borthagaray, Dani Boix, Stéphanie Gascón, Jordi Sala, Irene Tornero, Xavier D. Quintana & Matías Arim"
-subtitle: "asdas"
-date: "25-Mar-2021"
+subtitle: "Ecography - DOI: "
+date: "Accepted - 25-Mar-2021"
 output: rmdformats::downcute
 knit: (function(input_file, encoding) {
   out_dir <- 'docs';
@@ -17,25 +17,32 @@ knitr::opts_chunk$set(echo = T,
 ```
 # **Script introduction**
 
-Find in the following lines the code corresponding to Supplementary material 3B: Lines_to_Analyse from the article "Metacommunity resilience against simulated gradients of wildfire: disturbance intensity and species dispersal ability determine landscape recover capacity". The original scripts with the used functions can be found in
+Find in the following lines the code corresponding the analysis from the article: "Metacommunity resilience against simulated gradients of wildfire: disturbance intensity and species dispersal ability determine landscape recover capacity". 
+
+All the suplementary material images, original scripts and used functions can be found in:
 
 Article DOI: 
 
-Direct link: https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git
+Direct link: https://github.com/Cunillera-Montcusi/ECOGRAPHY_LotteryModel
 
-## *Packages required to run the functions if needed*
+To properly follow the following steps we recommend to read Methods section of the article: DOI
+
+## *Packages required to run the functions: Supplementary S3*
+
+Functions to carry all the simulation steps (Figure 2) are found in Supplementary 3: https://github.com/Cunillera-Montcusi/ECOGRAPHY_LotteryModel/blob/main/Supplementary%20S3 
+
 ```{r packages , eval=FALSE}
 library(vegan)
 library(igraph)
 library(sna)
 library(dummies)
 
-# Load functions to run the all the simulations - Supplementary 3A: https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git
-source("Sup S3a- CunilleraMontcusi_et_al_Functions_for_LotteryModel_and_Recolonization_mixed_dispersal.R")
+# Load functions to run the all the simulations
+source("Supplementary S3.R")
 
 ```
 
-## *Initial steps before metacommunity splitting*
+# **Initial steps**
 
 ### Initial metacommunity creation
 
@@ -52,11 +59,17 @@ out.t<-matrix(c(1,0,0),1,3)
 
 # **Network creation - Figure 2A**
 
-Uploading the xy dataset and creation of the different networks that correspond to the 9 dispersal abilities considered in the current study.
+_Dispersal networks_
+
+See Methods section: 
+
+The lottery model considers the fact that metacommunities are assembled by species belonging to different functional groups with contrasting dispersal networks (Borthagaray et al. 2015b).  Each of these dispersal groups has a maximum distance that determines its movement between local communities (following Urban and Keitt 2001, Estrada and Bodin 2008, Economo and Keitt 2010, Gilarranz and Bascompte 2012, Dale 2017). In the model, each dispersal group can only disperse between water bodies that are at a distance below this threshold. Thus, for a determined dispersal group, the water bodies that are below their corresponding threshold distance will be connected conforming the group specific dispersal network. This allows us to incorporate the different landscape perceptions that could be observed in the real metacommunity network (Borthagaray et al. 2015). Based on literature regarding the dispersal ability of the taxa occurring in the studied ponds and their reported dispersal groups, nine dispersal networks were constructed (Louette and De Meester 2005, Shurin et al. 2009), which were related to four dispersal ability groups (Heino 2013, Cunillera-Montcusí et al. 2019, 2020a). Dispersal distances of 250 and 500 meters correspond to dispersal ranges reported for species with passive dispersal ability and aquatic adults, Group 1 (e.g., Oligochaeta, Hirudinea, Gastropoda; Van De Meutter et al. 2007, Kappes and Haase 2012 and references therein); 1000 and 1500 meters correspond to the dispersal range for weak active dispersers with flying adults, Group 2 (e.g., Diptera: Ceratopogonidae, Chironomidae; Delettre and Morvan 2000, Dettinger-Klemm 2003, Vallenduuk and Moller Pillot 2007); 2000 and 2500 meters correspond to moderate active dispersers with flying adults, Group 3 (e.g., Ephemeroptera, Trichoptera; Kovats et al. 1996, Nilsson 1996, Astorga et al. 2012); dispersal distances greater than 3000 meters correspond to species with strong active dispersal and flying adults, Group 4 (e.g., Odonata, Heteroptera, Coleoptera; Nilsson 1996, Conrad et al. 1999, Angelibert and Giani 2003, Chaput-Bardy et al. 2010, Miller and Bergsten 2016). According to this criterion, nine dispersal networks were considered representing the following dispersal distances: 250, 500, 1000, 1500, 2000, 2500, 3000, 3842, and 5000 meters. It should be noted that in the study system, a distance of 3842 meters corresponds to the percolation distance, defined as the minimum linkage distance at which all metacommunity network nodes become connected to at least one neighbour node (Keitt 1997, Urban and Keitt 2001, Solé 2012). This distance implies a transition in global connectivity from a fragmented to a totally connected landscape in which all water bodies are potentially reachable.
 
 ```{r Figure 2A, echo=FALSE, out.width='100%',  results = 'markup'}
 knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Sixth round (L'ESTOCADA FINAL)/Rmarkdown/Figure 2A.jpg")
 ```
+
+Uploading the xy dataset and creation of the different networks that correspond to the 9 dispersal abilities considered in the current study.
 
 ```{r networks creation, eval=FALSE}
 
@@ -83,12 +96,15 @@ all_graphs <- list(LG_albera250, LG_albera500, LG_albera1000, LG_albera1500, LG_
 length(all_graphs) # Check number of items
 ```
 
-
 # **Metacommunity splitting**
 
-We generate the community spliting in 5 levels of "alfa" value (0.1,0.3,0.5,0.7,0.9). First, we create the vector with the corresponding alfas ( _all_alphas_ ). After this we run the function _split.metacomm.alpha_ (Supplementary material S3A - https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git). 
+See Methods section: 
 
-We split matrix in two submatrices. Each "dispersal group" have a fraction (alpha) of individuals realted to a resource shared with other trophic groups. All individuals in the "shared pool" follow a neutral dynamic in which individuals of any species can be replaced by individuals of any other. In addition, the other fraction of individulas are related to resources exclusevely exploted by each dispersal group (1-alpha)
+Resource overlap between dispersal groups was also included in the model as a sensitivity analysis considering a fraction of the resources of local communities (α) as shared among all dispersal groups and a fraction (1-α) exclusive to each group. In the lottery dynamics, shared individuals could be replaced by any dispersal group but exclusive individuals are only replaced by individuals from the same dispersal group. The sensitivity of the obtained results to α was evaluated considering a range of resource overlaps (α= 0.1, 0.3, 0.5, 0.7, 0.9). 
+
+We generate the community spliting in 5 levels of "alfa" value (0.1,0.3,0.5,0.7,0.9). First, we create the vector with the corresponding alfas ( _all_alphas_ ). After this we run the function _split.metacomm.alpha_ (Supplementary material S3 - https://github.com/Cunillera-Montcusi/ECOGRAPHY_LotteryModel/blob/main/Supplementary%20S3). 
+
+We split matrix in two submatrices. Each "dispersal group" have a fraction (alpha) of individuals realted to a resource shared with other trophic groups. All individuals in the "shared pool" follow a neutral dynamic in which individuals of any species can be replaced by individuals of any other. In addition, the other fraction of individuals are related to resources exclusively exploited by each dispersal group (1-alpha)
 
 ### _Alpha of 0.1_
 ```{r ALPHA 0.1,eval=FALSE}
@@ -131,12 +147,22 @@ mm0.9<- split.metacomm.alpha(grafos = all_graphs ,metacom = metacom, alphas = al
 ```
 
 # **Metacommunity creation - Figure 2B**
-Generation of the metacommunities for each alpha value using the function _meta.comm_neutral_asimetrica_ (Supplementary material S3A - https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git).
-First we generate the "entrada" list which will have all the needed entering items for the function.
-Second we run the function for 400 iterations and repeat it 25 times (=10,000 iterations). This is done to keep save the process every 400 iterations. 
+
+_Lottery model_
+
+See Methods section: 
+
+Metacommunities were assembled using a lottery model (Hubbell 2001, Borthagaray et al. 2014, Worm and Tittensor 2018). The model generates the deletion and replacement of individuals in each local community (i.e., water body) along 10,000 times following these steps (Figure 2): a) the order of the communities to be updated is randomized; b) 50 individuals are randomly removed from a local community; c) individuals are replaced with a probability of m with individuals from communities linked to the focal community and a probability of 1-m for individuals randomly selected from the same community (m=0.01 for all species and all simulations); d) steps b to c are repeated until all communities are updated. Ten thousand repetitions of this cycle were enough for biodiversity stabilization in our simulations (Supplementary S1). The simulation started with a metacommunity of 200 species, each having 20 individuals in every local community, so a total of 4000 individuals compose an individual local community (i.e., water body). This species richness is close to that observed in the studied system (Cunillera-Montcusí et al. 2019). 
+
 ```{r Figure 2B, echo=FALSE, out.width='100%',  results = 'markup'}
 knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Sixth round (L'ESTOCADA FINAL)/Rmarkdown/Figure 2B.jpg")
 ```
+
+Generation of the metacommunities for each alpha value using the function _meta.comm_neutral_asimetrica_ (Supplementary material S3 - https://github.com/Cunillera-Montcusi/ECOGRAPHY_LotteryModel/blob/main/Supplementary%20S3). 
+
+First, we generate the "entrada" list which will have all the needed entering items for the function.
+
+Second, we run the function for 400 iterations and repeat it 25 times (=10,000 iterations). This is done to keep saving the process every 400 iterations.
 
 ### _Alpha of 0.1_
 ```{r ALPHA 0.1 metacommunities,eval=FALSE}
@@ -234,7 +260,8 @@ for (i in 1:25) {
 
 # **Fake Fires simulation - Figure 2C**
 
-Simulation of the 400 wildfire scenarios of varying intensity and area using the function _rangos_ (Supplementary material S3A - https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git).
+Simulation of the 400 wildfire scenarios of varying intensity and area using the function _rangos_ (Supplementary material S3 - https://github.com/Cunillera-Montcusi/ECOGRAPHY_LotteryModel/blob/main/Supplementary%20S3). 
+
 With this simulation we create the _fake.wildfires_ table, that will be used in the following steps. 
 
 We also load the nodes that were affected by the wildfire in 2012 _Original_Fire.RData_ for using them in the simulations corresponding to that wildfire. 
@@ -242,7 +269,6 @@ We also load the nodes that were affected by the wildfire in 2012 _Original_Fire
 ```{r Figure 2C, echo=FALSE, out.width='100%',  results = 'markup'}
 knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Sixth round (L'ESTOCADA FINAL)/Rmarkdown/Figure 2C.jpg")
 ```
-
 
 ```{r Fires and FakeFires ,eval=FALSE}
 # Fake fires - 400
@@ -256,13 +282,19 @@ Original_FIRE
 
 # **Burning and recolonization - Figure 2D**
 
-We use the function _burning_recolonization_function.2_ (Supplementary material S3A - https://github.com/Cunillera-Montcusi/CunilleraMontcusi_LotteryModel.git). 
-First, this function burns (community=0) the selected communities according to the _Original_Fire.RData_ or the _fake.wildfires_. 
-Second, simulates the coalescent recolonization process after 1 iteration (T1) or after 100 (T100). Each process is done for each alpha value. 
+See Methods section: 
+
+Once the metacommunities were created, the wildfire simulation started (Figure 2), eliminating all the individuals in the selected burned local communities. The burned water bodies were randomly selected from the 542 available in the landscape by defining different wildfire scenarios of varying intensity and size (Supplementary S2). After the wildfire, a coalescent recolonization dynamic was implemented in following these steps: a) communities linked to the burned water bodies were identified according to whether they contained individuals (i.e., unburned or previously recolonized water bodies); b) one individual was randomly selected for colonization from the linked communities; c) the community was then filled via a coalescent dynamic with the same fixed immigration probability (m). These steps were repeated until the community reached the initial number of individuals. After the first arrival, internal recruitment probability (1-m) was also considered in step “a”. Every repetition was recorded as an individual iteration. This process ended when all burned water bodies were recolonized or after a defined number of iterations of recolonization dynamics. We considered a total of 100 iterations following the coalescent filling of burned water bodies connected to unburned or recolonized ones. Lottery and coalescent metacommunity models may provide similar results (Worm and Tittensor 2018). We opted for cycles of coalescent communities filling because it involves an arbitrary time scale that we could use afterwards as a temporal measure of community resilience (see below). 
 
 ```{r Figure 2D, echo=FALSE, out.width='100%',  results = 'markup'}
 knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Sixth round (L'ESTOCADA FINAL)/Rmarkdown/Figure 2D.jpg")
 ```
+
+We use the function _burning_recolonization_function.2_ (Supplementary material S3 - https://github.com/Cunillera-Montcusi/ECOGRAPHY_LotteryModel/blob/main/Supplementary%20S3). 
+
+First, this function burns (community=0) the selected communities according to the _Original_Fire.RData_ or the _fake.wildfires_. 
+
+Second, simulates the coalescent recolonization process after 1 iteration (T1) or after 100 (T100). Each process is done for each alpha value. 
 
 ## *Real 2012 wildfire* 
 ### _Alpha of 0.1_
@@ -637,8 +669,25 @@ Burn_rec_ENTRADA_0.9_100 <- burning_recolonization_function.2(M =fake.wildfires,
 save.image("output/Burn_rec_ENTRADA_0.9_100.RData")
 ```
 
-# **Results and Article plots - Real 2012 wildfire**
-Once we finish all the simulations for the Real 2012 wildfire and the Simulated Fake Fires scenarios and each of the 5 alphas we created the plots. Plots shown in the Article correspond only to alpha=0.5 values. All the other plots can be found here or in the supplementary material.   
+# **Results and Article plots**
+
+_Metacommunity resilience analysis_
+
+See Methds section: 
+
+We used a set of complementary metrics to elucidate the recovery capacity of communities after a disturbance (Table 1). First, we calculated the average proportion of the species pool that is available for the assembly of local water bodies immediately after disturbance (T1) and after 100 iterations of the coalescent filling (T100). These proportions represent the available diversity for community assembly. Secondly, we estimated the number of coalescent iterations required to reach a burned community. This value based on time complements the first one based on richness. The maximum value of iterations was fixed to 100 because it ensures that all dispersal groups reach burned water bodies if their associated metacommunity networks connect with them. Complementarily, these previous metrics were expressed in terms of resilience as the temporal rate of community recovery and the final extent of return to previous conditions after disturbance. These two metrics are conceptually related to engineering resilience and ecological resilience, which evaluate system’s time or rate to return to previous structural attributes and the amount of change needed to change system state or equilibria respectively (Angeler and Allen 2016). Specifically, we estimated the Return Rate (hereafter RR) as the inverse of the number of coalescent iterations required to reach burned ponds (Table 1). The return rate represents the speed at which the system recovers (Pimm 1991; Table 1). A RR closer to one imply a fast recovery and RR closer to zero implies a slow recolonization—or any recolonization capacity if RR=0. Finally, we calculated the Diversity Recovery (hereafter DR) defined as the proportion of richness recovery between burned communities after 1 and after 100 cycles of community refiling, quantifying how much change in diversity the communities experience throughout the colonization and thus, linked to ecological resilience concept (Holling 1973, Angeler and Allen 2016; Table 1). A DR value of 100 implies a high resilience (i.e., small diversity changes throughout recolonization), as in only one iteration the community has recovered all the available richness. Whereas lower values quantify the deviation from former richness (i.e., high diversity changes along recolonization). . The resilience metrics, RR, and DR, together with the mean richness at T1 and T100 provide complementary information about the recovering dynamics of disturbed communities. All calculations and model simulations were carried out using R software (R-Core Team 2019; Supplementary S3). 
+
+Once we finish all the simulations for the Real 2012 wildfire and the Simulated Fake Fires scenarios and each of the 5 alphas we created and analysed their results.
+
+Results can be found in: https://github.com/Cunillera-Montcusi/ECOGRAPHY_LotteryModel/blob/main/Dataset_link and the corresponding figshare repository:
+File _Pre-Burned_Communities.rar_ correspond to the pre burning steps (Simulated metacommunities)
+File _Post-Burned_RecolinzedCommunities.rar_ corresponds to the final output of the simulations (Recolonized communities)
+
+Plots shown in the article and in the following lines correspond *only to simulations with alpha=0.5*. All the other results corresponding to all alphas can be found in Article's supplementary material (DOI: )
+
+See Results and Discussion of the article for results interpretations (DOI: )
+
+# **Real 2012 wildfire simulations**
 
 ### _Load the output data_ 
 ```{r Load Burn_Recolonized data, eval=FALSE}
@@ -654,6 +703,7 @@ colorts<- CUNILLERA_pal("grey")(9)
 ```
 
 We calculate Return Rate (RR) and Diversity Recover (DR) for each one of the alphas and for the real 2012 wildfire scenario.
+
 First, we create the plot functions for generating the plots:
 ## _Function to generate plots_ 
 ```{r Plot_Function_Original ,eval=FALSE}
@@ -727,7 +777,7 @@ plot_Orig_DC <- function(Orig_rec_100, Pre_fire_Orig, titol){
 }
 ```
 
-## Second, we create the plots for *all alpha values*
+## Second, we create the plots for all alpha values _Supplementary S4_
 ```{r Plot Original_Alphas ,eval=FALSE}
 png(filename = "original_fires_outputs.png",width = 18000,height =14000 ,units = "px",res = 1000)
 
@@ -771,16 +821,17 @@ dev.off()
 knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Figures to share/Figure 4.jpg")
 ```
 
-## *Supplementary S4*
 ```{r sUPPLEMENTARY S4, echo=FALSE, out.width='100%',  results = 'markup'}
 #knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/original_fires_outputs.png")
 ```
 
 
-# **Results and Article plots - Simulated wildfires**
-Simulated wildfires scenarios are ploted altogether in "3D" plots where the wildfire scenarios characteristics: y=intensitty and x=area and the response variable (RR, DR, Average richness T1, Average richness T100) are represented. 
+# **Simulated wildfires**
+
+Simulated wildfires scenarios are ploted altogether in "3D" plots where the wildfire scenarios characteristics: y=intensitty and x=area and the corresponding response variable (RR, DR, Average richness T1, Average richness T100) are represented. Blue colours imply "high" values of resilience and red colours "low" resilience.
 
 ## *Load and join the output data for T1 and T100* 
+
 ### _T1_
 ```{r Load Burn Recolonized FakeFires at T1 ,eval=FALSE}
 load("Post-Burned_RecolinzedCommunities/Burn/T1/Burn_rec_ENTRADA_0.1.RData")
@@ -882,7 +933,7 @@ Burn_0.9_T100 <- buidatge_BURN_output(Burn_rec_ENTRADA_0.9_100_05,Burn_rec_ENTRA
 
 ## *Functions to generate plots* 
 
-### _Figure 3- Entire metacommunity at T1 and T100_
+### _Figure 3 - Entire metacommunity at T1 and T100_
 ```{r Entire metacommunity at T1 - Figure 3, eval=FALSE}
 # Plots of the whole community (summ of all dispersal abilities) for each alpha 
 GLOBAL_ARTICLE_FOR_GGPLOT <- function(Post_Val_Matrix, title, subtitle){
@@ -1809,6 +1860,7 @@ ARTICLE_FOR_GGPLOT_sd <- function(Post_Val_Matrix, title, subtitle){
 ```
 
 ## *Figure 3* 
+
 ### _Figure 3-T1 and Supplementary S6D. Plot for whole community_
 ```{r Plots T1 Figure 3 data FakeFires,eval=FALSE}
 #Alpha 0.1
@@ -1863,7 +1915,7 @@ dev.off()
 knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Figures to share/Figure 3.jpg")
 ```
 
-### *Supplementary Figure 3 =0.5*
+### *Supplementary Figure 3 alpha=0.5*
 ```{r Figure 3_Alpha 01,fig.cap="Alpha 0.1 T1", echo=FALSE, out.width='100%',  results = 'markup'}
 #knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Globalplot_01.png")
 ```
@@ -1906,6 +1958,7 @@ knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DI
 
 
 ## *Figure 5*
+
 ### *Figure 5 article - 4 dispersal abilites at alpha=0.5*
 ```{r Figure 5_article, echo=FALSE, out.width='100%',  results = 'markup'}
 knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Figures to share/Figure 5.jpg")
@@ -1916,7 +1969,7 @@ knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DI
 #knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Figures to share/Supplementary_S4.png")
 ```
 
-### _Figure 5-RR and Supplementary S6A. Return Rate(RR)_ 
+### _Figure 5-RR and Supplementary S6A. Return Rate(RR) at alpha=0.5_ 
 ```{r RRplots data T100 FakeFires ,eval=FALSE}
 # Plots for every dispersal ability group (9 plots together) - Figure 6D and Supplementary S4
 #Alpha 0.1
@@ -1931,7 +1984,7 @@ Combined_article_plot(Burn_0.7_T100, file_name ="Alpha 0.7_RR", iterations = "RR
 Combined_article_plot(Burn_0.9_T100, file_name ="Alpha 0.9_RR", iterations = "RR")
 ```
 
-### *RR Supplementary S6A*
+### *RR Supplementary S6A at alpha=0.5*
 
 ```{r Figure Supplementary 6A 01,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
 #Alpha 0.1
@@ -1982,7 +2035,7 @@ Combined_article_plot_Rich_Change_Rate(Burn_0.9_T100,
                                        file_name ="Alpha 0.9_DR", iterations = "DR")
 ```
 
-### *DR Supplementary S6B*
+### *DR Supplementary S6B at alpha=0.5*
 ```{r Figure Supplementary 6B 01 ,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
 #Alpha 0.1
 #knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.1_DR.png")
@@ -2022,7 +2075,7 @@ Combined_article_plot(Burn_rec_ENTRADA_0.7, file_name ="Alpha 0.7", iterations =
 Combined_article_plot(Burn_rec_ENTRADA_0.9, file_name ="Alpha 0.9", iterations = "T1")
 ```
 
-### *T1 Supplementary S6D*
+### *T1 Supplementary S6D  at alpha=0.5*
 ```{r Figure T1 Supplementary S6D 01,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
 #Alpha 0.1
 #knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.1.png")
@@ -2063,7 +2116,7 @@ Combined_article_plot(Burn_0.7_T100, file_name ="Alpha 0.7_T100", iterations = "
 Combined_article_plot(Burn_0.9_T100, file_name ="Alpha 0.9_T100", iterations = "T100")
 ```
 
-### *T100 Supplementary S6D*
+### *T100 Supplementary S6D at alpha=0.5*
 ```{r Figure T100 Supplementary S6D 01,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
 #Alpha 0.1
 #knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/Alpha 0.1_T100.png")
@@ -2090,6 +2143,7 @@ knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DI
 ```
 
 ## *Supplementary S6C*
+
 ### _Supplementary S6C T100. SD values of the mean diversity_
 ```{r Plots iterationsT100 FakeFires data, eval=FALSE}
 #Alpha 0.1
@@ -2104,7 +2158,7 @@ Combined_article_plot_iter(Burn_0.7_T100, file_name ="IT_Alpha 0.7_T100", iterat
 Combined_article_plot_iter(Burn_0.9_T100, file_name ="IT_Alpha 0.9_T100", iterations = "T100")
 ```
 
-### *Supplementary S6C*
+### *Supplementary S6C at alpha=0.5*
 ```{r Figure Supplementary S6D 01,fig.cap="Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
 #Alpha 0.1
 #knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/IT_Alpha 0.1_T100.png")
@@ -2159,7 +2213,7 @@ Combined_article_plot_sd(Burn_0.7_T100, file_name ="SD_Alpha 0.7_T100", iteratio
 Combined_article_plot_sd(Burn_0.9_T100, file_name ="SD_Alpha 0.9_T100", iterations = "T100")
 ```
 
-### *Supplementary S7*
+### *Supplementary S7 at alpha=0.5*
 ```{r Supplementary S7 T1 01,fig.cap="T1 Alpha 0.1", echo=FALSE, out.width='100%',  results = 'markup'}
 #Alpha 0.1
 #knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.1.png")
