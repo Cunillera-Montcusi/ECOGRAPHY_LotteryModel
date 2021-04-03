@@ -5,6 +5,7 @@ Metacommunity resilience against simulated gradients of wildfire: disturbance in
 By David Cunillera-Montcusí, Ana Inés Borthagaray, Dani Boix, Stéphanie Gascón, Jordi Sala, Irene Tornero, Xavier D. Quintana & Matías Arim
 
 DOI:
+
 Accepted - 25-Mar-2021
 
 See code and results: https://cunillera-montcusi.github.io/ECOGRAPHY_LotteryModel/
