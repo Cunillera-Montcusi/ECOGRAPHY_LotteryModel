@@ -1966,7 +1966,7 @@ knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DI
 
 ### *Figure 5 complete at alpha=0.5*
 ```{r Figure 5_total, echo=FALSE, out.width='100%',  results = 'markup'}
-#knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Figures to share/Supplementary_S4.png")
+knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA FINAL)/Figures to share/Supplementary_S4.png")
 ```
 
 ### _Figure 5-RR and Supplementary S6A. Return Rate(RR) at alpha=0.5_ 
@@ -2259,6 +2259,19 @@ knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DI
 #knitr::include_graphics("C:/Users/Cunilleramontcusi/Dropbox/DAVID DOC/LLAM al DIA/URUGUAY/FakeFires/7. Def_Def/2. Ecography/6. Figuers (L'ESTOCADA #FINAL)/Imatges-Ecography/SD_Alpha 0.9_T100.png")
 ```
 
+# **Session information**
+
+```{r packages, include=FALSE, echo=FALSE}
+library(vegan)
+library(igraph)
+library(sna)
+library(dummies)
+```
+
+
+```{r session information ,echo=T, include=T, results = 'markup'}
+sessionInfo()
+```
 
 
 
