@@ -1,7 +1,7 @@
 ---
 title: "Metacommunity resilience against simulated gradients of wildfire: disturbance intensity and species dispersal ability determine landscape recover capacity"
 author: "David Cunillera-Montcusí, Ana Inés Borthagaray, Dani Boix, Stéphanie Gascón, Jordi Sala, Irene Tornero, Xavier D. Quintana & Matías Arim"
-subtitle: "Ecography - DOI: "
+subtitle: "Ecography - DOI: 10.1111/ecog.05347"
 date: "Accepted - 25-Mar-2021"
 output: rmdformats::downcute
 knit: (function(input_file, encoding) {
@@ -21,11 +21,11 @@ Find in the following lines the code corresponding the analysis from the article
 
 All the suplementary material images, original scripts and used functions can be found in:
 
-Article DOI: 
+Article DOI: 10.1111/ecog.05347 
 
 Direct link: https://github.com/Cunillera-Montcusi/ECOGRAPHY_LotteryModel
 
-To properly follow the following steps we recommend to read Methods section of the article: DOI
+To properly follow the following steps we recommend to read Methods section of the article: 10.1111/ecog.05347
 
 ## *Packages required to run the functions: Supplementary S3*
 
@@ -61,7 +61,7 @@ out.t<-matrix(c(1,0,0),1,3)
 
 _Dispersal networks_
 
-See Methods section (DOI: )
+See Methods section (DOI:10.1111/ecog.05347)
 
 The lottery model considers the fact that metacommunities are assembled by species belonging to different functional groups with contrasting dispersal networks (Borthagaray et al. 2015b).  Each of these dispersal groups has a maximum distance that determines its movement between local communities (following Urban and Keitt 2001, Estrada and Bodin 2008, Economo and Keitt 2010, Gilarranz and Bascompte 2012, Dale 2017). In the model, each dispersal group can only disperse between water bodies that are at a distance below this threshold. Thus, for a determined dispersal group, the water bodies that are below their corresponding threshold distance will be connected conforming the group specific dispersal network. This allows us to incorporate the different landscape perceptions that could be observed in the real metacommunity network (Borthagaray et al. 2015). Based on literature regarding the dispersal ability of the taxa occurring in the studied ponds and their reported dispersal groups, nine dispersal networks were constructed (Louette and De Meester 2005, Shurin et al. 2009), which were related to four dispersal ability groups (Heino 2013, Cunillera-Montcusí et al. 2019, 2020a). Dispersal distances of 250 and 500 meters correspond to dispersal ranges reported for species with passive dispersal ability and aquatic adults, Group 1 (e.g., Oligochaeta, Hirudinea, Gastropoda; Van De Meutter et al. 2007, Kappes and Haase 2012 and references therein); 1000 and 1500 meters correspond to the dispersal range for weak active dispersers with flying adults, Group 2 (e.g., Diptera: Ceratopogonidae, Chironomidae; Delettre and Morvan 2000, Dettinger-Klemm 2003, Vallenduuk and Moller Pillot 2007); 2000 and 2500 meters correspond to moderate active dispersers with flying adults, Group 3 (e.g., Ephemeroptera, Trichoptera; Kovats et al. 1996, Nilsson 1996, Astorga et al. 2012); dispersal distances greater than 3000 meters correspond to species with strong active dispersal and flying adults, Group 4 (e.g., Odonata, Heteroptera, Coleoptera; Nilsson 1996, Conrad et al. 1999, Angelibert and Giani 2003, Chaput-Bardy et al. 2010, Miller and Bergsten 2016). According to this criterion, nine dispersal networks were considered representing the following dispersal distances: 250, 500, 1000, 1500, 2000, 2500, 3000, 3842, and 5000 meters. It should be noted that in the study system, a distance of 3842 meters corresponds to the percolation distance, defined as the minimum linkage distance at which all metacommunity network nodes become connected to at least one neighbour node (Keitt 1997, Urban and Keitt 2001, Solé 2012). This distance implies a transition in global connectivity from a fragmented to a totally connected landscape in which all water bodies are potentially reachable.
 
@@ -98,7 +98,7 @@ length(all_graphs) # Check number of items
 
 # **Metacommunity splitting**
 
-See Methods section (DOI: ) 
+See Methods section (DOI:10.1111/ecog.05347) 
 
 Resource overlap between dispersal groups was also included in the model as a sensitivity analysis considering a fraction of the resources of local communities (α) as shared among all dispersal groups and a fraction (1-α) exclusive to each group. In the lottery dynamics, shared individuals could be replaced by any dispersal group but exclusive individuals are only replaced by individuals from the same dispersal group. The sensitivity of the obtained results to α was evaluated considering a range of resource overlaps (α= 0.1, 0.3, 0.5, 0.7, 0.9). 
 
@@ -150,7 +150,7 @@ mm0.9<- split.metacomm.alpha(grafos = all_graphs ,metacom = metacom, alphas = al
 
 _Lottery model_
 
-See Methods section (DOI: )
+See Methods section (DOI:10.1111/ecog.05347)
 
 Metacommunities were assembled using a lottery model (Hubbell 2001, Borthagaray et al. 2014, Worm and Tittensor 2018). The model generates the deletion and replacement of individuals in each local community (i.e., water body) along 10,000 times following these steps (Figure 2): a) the order of the communities to be updated is randomized; b) 50 individuals are randomly removed from a local community; c) individuals are replaced with a probability of m with individuals from communities linked to the focal community and a probability of 1-m for individuals randomly selected from the same community (m=0.01 for all species and all simulations); d) steps b to c are repeated until all communities are updated. Ten thousand repetitions of this cycle were enough for biodiversity stabilization in our simulations (Supplementary S1). The simulation started with a metacommunity of 200 species, each having 20 individuals in every local community, so a total of 4000 individuals compose an individual local community (i.e., water body). This species richness is close to that observed in the studied system (Cunillera-Montcusí et al. 2019). 
 
@@ -282,7 +282,7 @@ Original_FIRE
 
 # **Burning and recolonization - Figure 2D**
 
-See Methods section (DOI: ) 
+See Methods section (DOI:10.1111/ecog.05347) 
 
 Once the metacommunities were created, the wildfire simulation started (Figure 2), eliminating all the individuals in the selected burned local communities. The burned water bodies were randomly selected from the 542 available in the landscape by defining different wildfire scenarios of varying intensity and size (Supplementary S2). After the wildfire, a coalescent recolonization dynamic was implemented in following these steps: a) communities linked to the burned water bodies were identified according to whether they contained individuals (i.e., unburned or previously recolonized water bodies); b) one individual was randomly selected for colonization from the linked communities; c) the community was then filled via a coalescent dynamic with the same fixed immigration probability (m). These steps were repeated until the community reached the initial number of individuals. After the first arrival, internal recruitment probability (1-m) was also considered in step “a”. Every repetition was recorded as an individual iteration. This process ended when all burned water bodies were recolonized or after a defined number of iterations of recolonization dynamics. We considered a total of 100 iterations following the coalescent filling of burned water bodies connected to unburned or recolonized ones. Lottery and coalescent metacommunity models may provide similar results (Worm and Tittensor 2018). We opted for cycles of coalescent communities filling because it involves an arbitrary time scale that we could use afterwards as a temporal measure of community resilience (see below). 
 
@@ -673,7 +673,7 @@ save.image("output/Burn_rec_ENTRADA_0.9_100.RData")
 
 _Metacommunity resilience analysis_
 
-See Methods section (DOI: )
+See Methods section (DOI:10.1111/ecog.05347)
 
 We used a set of complementary metrics to elucidate the recovery capacity of communities after a disturbance (Table 1). First, we calculated the average proportion of the species pool that is available for the assembly of local water bodies immediately after disturbance (T1) and after 100 iterations of the coalescent filling (T100). These proportions represent the available diversity for community assembly. Secondly, we estimated the number of coalescent iterations required to reach a burned community. This value based on time complements the first one based on richness. The maximum value of iterations was fixed to 100 because it ensures that all dispersal groups reach burned water bodies if their associated metacommunity networks connect with them. Complementarily, these previous metrics were expressed in terms of resilience as the temporal rate of community recovery and the final extent of return to previous conditions after disturbance. These two metrics are conceptually related to engineering resilience and ecological resilience, which evaluate system’s time or rate to return to previous structural attributes and the amount of change needed to change system state or equilibria respectively (Angeler and Allen 2016). Specifically, we estimated the Return Rate (hereafter RR) as the inverse of the number of coalescent iterations required to reach burned ponds (Table 1). The return rate represents the speed at which the system recovers (Pimm 1991; Table 1). A RR closer to one imply a fast recovery and RR closer to zero implies a slow recolonization—or any recolonization capacity if RR=0. Finally, we calculated the Diversity Recovery (hereafter DR) defined as the proportion of richness recovery between burned communities after 1 and after 100 cycles of community refiling, quantifying how much change in diversity the communities experience throughout the colonization and thus, linked to ecological resilience concept (Holling 1973, Angeler and Allen 2016; Table 1). A DR value of 100 implies a high resilience (i.e., small diversity changes throughout recolonization), as in only one iteration the community has recovered all the available richness. Whereas lower values quantify the deviation from former richness (i.e., high diversity changes along recolonization). . The resilience metrics, RR, and DR, together with the mean richness at T1 and T100 provide complementary information about the recovering dynamics of disturbed communities. All calculations and model simulations were carried out using R software (R-Core Team 2019; Supplementary S3). 
 
@@ -683,9 +683,9 @@ Results can be found in: https://github.com/Cunillera-Montcusi/ECOGRAPHY_Lottery
 File _Pre-Burned_Communities.rar_ correspond to the pre burning steps (Simulated metacommunities)
 File _Post-Burned_RecolinzedCommunities.rar_ corresponds to the final output of the simulations (Recolonized communities)
 
-Plots shown in the article and in the following lines correspond *only to simulations with alpha=0.5*. All the other results corresponding to all alphas can be found in Article's supplementary material (DOI: )
+Plots shown in the article and in the following lines correspond *only to simulations with alpha=0.5*. All the other results corresponding to all alphas can be found in Article's supplementary material (DOI:10.1111/ecog.05347)
 
-See Results and Discussion of the article for results interpretations (DOI: )
+See Results and Discussion of the article for results interpretations (DOI:10.1111/ecog.05347)
 
 # **Real 2012 wildfire simulations**
 
