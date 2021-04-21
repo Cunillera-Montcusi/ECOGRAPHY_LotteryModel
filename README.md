@@ -4,7 +4,7 @@ Metacommunity resilience against simulated gradients of wildfire: disturbance in
 
 By David Cunillera-Montcusí, Ana Inés Borthagaray, Dani Boix, Stéphanie Gascón, Jordi Sala, Irene Tornero, Xavier D. Quintana & Matías Arim
 
-DOI:
+DOI:10.1111/ecog.05347
 
 Accepted - 25-Mar-2021
 
